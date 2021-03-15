@@ -25,15 +25,15 @@ main = do
   let numOfStartingNumbers = convertStrInt (dimension (slice list 2 3))
 
   -- Regiões
-  --let regions = slice list 3 (numOfRegions + 3)
+  let regions = slice list 3 4
 
   -- Números já preenchidos e suas posições
-  --let startingNumbersAndPositions = slice list (numOfRegions + 3) (numOfRegions + numOfStartingNumbers + 3)
+  let startingNumbersAndPositions = slice list (4) (4 + numOfStartingNumbers)
 
   print n
   print numOfRegions
   print numOfStartingNumbers
-  --print regions
-  --print startingNumbersAndPositions
+  print regions
+  print startingNumbersAndPositions
 
   hClose handle
