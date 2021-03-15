@@ -8,6 +8,7 @@ dimension (n:_) = n
 convertStrInt :: [Char] -> Int
 convertStrInt str = read str :: Int
 
+-- Slice list
 slice xs i k | i > 0 = take (k - i) $ drop (i ) xs
 
 main = do
@@ -15,7 +16,7 @@ main = do
   handle <- openFile "input.txt" ReadMode
   contents <- hGetContents handle
   let list = lines contents
-  --print list
+  print list
 
   -- Dimensão da Matriz
   let n = convertStrInt (dimension list)
