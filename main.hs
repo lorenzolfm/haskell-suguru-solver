@@ -25,8 +25,9 @@ main = do
   let numOfStartingNumbers = convertStrInt (dimension (slice list 2 3))
 
   -- Regiões
-  let regions = slice list 3 (numOfRegions + 2)
+  let regions = slice list 3 (numOfRegions + 3)
 
+  -- Números já preenchidos e suas posições
   let startingNumbersAndPositions = slice list (numOfRegions + 3) (numOfRegions + numOfStartingNumbers + 3)
 
   print n
