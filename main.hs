@@ -11,8 +11,23 @@ convertStrInt str = read str :: Int
 -- Slice list
 slice xs i k | i > 0 = take (k - i) $ drop (i) xs
 
+-- Inicializar lista
+initList :: Int -> [Int]
+initList n = take n (repeat 0)
+
+repeatNTimes 0 _ = return ()
+repeatNTimes n action =
+  do
+    let puzzle = action
+    repeatNTimes (n - 1) action
+
+appendList :: [Int] -> [[Int]] -> [[Int]]
+appendList list puzzle =
+  do
+    puzzle ++ [list]
+
 main = do
-  -- Aloca e retornar um novo manipulador para gerenciar o arquivo
+  -- FileIO
   handle <- openFile "input.txt" ReadMode
   contents <- hGetContents handle
   let list = lines contents
@@ -30,10 +45,19 @@ main = do
   -- Números já preenchidos e suas posições
   let startingNumbersAndPositions = slice list (4) (4 + numOfStartingNumbers)
 
-  print n
-  print numOfRegions
-  print numOfStartingNumbers
-  print regions
-  print startingNumbersAndPositions
+  --print n
+  --print numOfRegions
+  --print numOfStartingNumbers
+  --print regions
+  --print startingNumbersAndPositions
+
+  -- Fim IO
+  -- Estruturação de dados
+  let puzzle = initList n:[]
+  print puzzle
+
+  --repeatNTimes n (appendList (initList n) puzzle)
+
+
 
   hClose handle
