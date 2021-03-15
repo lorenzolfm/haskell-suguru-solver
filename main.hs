@@ -26,6 +26,9 @@ appendList list puzzle =
   do
     puzzle ++ [list]
 
+matrix :: Int -> Int -> a -> [[a]]
+matrix x y = replicate y . replicate x
+
 main = do
   -- FileIO
   handle <- openFile "input.txt" ReadMode
@@ -50,14 +53,12 @@ main = do
   --print numOfStartingNumbers
   --print regions
   --print startingNumbersAndPositions
-
   -- Fim IO
+
   -- Estruturação de dados
-  let puzzle = initList n:[]
-  print puzzle
 
-  --repeatNTimes n (appendList (initList n) puzzle)
-
-
+  -- Matriz do jogo
+  let puzzle = matrix n n 0
+  --print puzzle
 
   hClose handle
