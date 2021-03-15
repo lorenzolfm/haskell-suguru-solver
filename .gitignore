@@ -1,2 +1,4 @@
-*.o
-*.hi
+# Ignorar tudo, exceto pelo .hs
+*
+!*.hs
+!README.md
