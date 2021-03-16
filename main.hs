@@ -14,28 +14,21 @@ main = do
   -- Dimensão da Matriz
   matrixSize <- getInputData listOfInputs 0
   -- Número de Grupos
-  numberOfGroups <- getInputData listOfInputs 1
+  numOfGroups <- getInputData listOfInputs 1
   -- Número de posições pré-preenchidas
   numOfInitiallyFilledCells <- getInputData listOfInputs 2
 
   print matrixSize
-  print numberOfGroups
+  print numOfGroups
   print numOfInitiallyFilledCells
 
+  -- Regiões (lista de strings)
+  let listOfGroupStrings = slice listOfInputs 3 (4 + numOfGroups - 1)
+  print listOfGroupStrings
 
-
-
-  ---- Regiões
-  --let regions = slice list 3 4
-
-  ---- Números já preenchidos e suas posições
-  --let startingNumbersAndPositions = slice list (4) (4 + numOfStartingNumbers)
-
-  ----print n
-  ----print numOfRegions
-  ----print numOfStartingNumbers
-  ----print regions
-  ----print startingNumbersAndPositions
+  -- Células pré-preenchidas (lista de strings)
+  let listOfInitiallyFilledCellsStrings = slice listOfInputs (3 + numOfGroups) (4 + numOfGroups + numOfInitiallyFilledCells - 1)
+  print listOfInitiallyFilledCellsStrings
   ---- Fim IO
 
   ---- Estruturação de dados
