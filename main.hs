@@ -4,7 +4,6 @@ import FileIO
 import Control.Monad
 import System.IO
 
-
 main = do
   -- FileIO
   handle <- openFile "input.txt" ReadMode
