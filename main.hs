@@ -1,33 +1,9 @@
-import System.IO
+module Main (main) where
+
+import FileIO
 import Control.Monad
+import System.IO
 
--- Get puzzle dimension
-dimension :: [t]-> t
-dimension (n:_) = n
-
-convertStrInt :: [Char] -> Int
-convertStrInt str = read str :: Int
-
--- Slice list
-slice xs i k | i > 0 = take (k - i) $ drop (i) xs
-
--- Inicializar lista
-initList :: Int -> [Int]
-initList n = take n (repeat 0)
-
-repeatNTimes 0 _ = return ()
-repeatNTimes n action =
-  do
-    let puzzle = action
-    repeatNTimes (n - 1) action
-
-appendList :: [Int] -> [[Int]] -> [[Int]]
-appendList list puzzle =
-  do
-    puzzle ++ [list]
-
-matrix :: Int -> Int -> a -> [[a]]
-matrix x y = replicate y . replicate x
 
 main = do
   -- FileIO
