@@ -1,39 +1,47 @@
 module Main (main) where
 
 import FileIO
-import Control.Monad
 import System.IO
+--import Control.Monad
 
 main = do
   -- FileIO
-  handle <- openFile "input.txt" ReadMode
-  contents <- hGetContents handle
-  let list = lines contents
+
+  -- Nome do arquivo passado como argumento
+  filePath <- getFilePath
+  listOfInputs <- getFileContents filePath
 
   -- Dimensão da Matriz
-  let n = convertStrInt (dimension list)
-  -- Numero de Regiões
-  let numOfRegions = convertStrInt (dimension (slice list 1 2))
-  -- Numero de pontos iniciais
-  let numOfStartingNumbers = convertStrInt (dimension (slice list 2 3))
+  matrixSize <- getInputData listOfInputs 0
+  -- Número de Grupos
+  numberOfGroups <- getInputData listOfInputs 1
+  -- Número de posições pré-preenchidas
+  numOfInitiallyFilledCells <- getInputData listOfInputs 2
 
-  -- Regiões
-  let regions = slice list 3 4
+  print matrixSize
+  print numberOfGroups
+  print numOfInitiallyFilledCells
 
-  -- Números já preenchidos e suas posições
-  let startingNumbersAndPositions = slice list (4) (4 + numOfStartingNumbers)
 
-  --print n
-  --print numOfRegions
-  --print numOfStartingNumbers
-  --print regions
-  --print startingNumbersAndPositions
-  -- Fim IO
 
-  -- Estruturação de dados
 
-  -- Matriz do jogo
-  let puzzle = matrix n n 0
-  --print puzzle
+  ---- Regiões
+  --let regions = slice list 3 4
 
-  hClose handle
+  ---- Números já preenchidos e suas posições
+  --let startingNumbersAndPositions = slice list (4) (4 + numOfStartingNumbers)
+
+  ----print n
+  ----print numOfRegions
+  ----print numOfStartingNumbers
+  ----print regions
+  ----print startingNumbersAndPositions
+  ---- Fim IO
+
+  ---- Estruturação de dados
+
+  ---- Matriz do jogo
+  --let puzzle = matrix n n 0
+  ----print puzzle
+
+  --hClose handle
