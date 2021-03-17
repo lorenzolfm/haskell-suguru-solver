@@ -32,16 +32,29 @@ type Position = (Int, Int)
 type Region = [Position]
 
 -- Converte uma string em posição
+-- Recebe uma string "x,y" e converte em (x,y)
 convertStrPos :: [Char] -> Position
 convertStrPos str = (read [str !! 0] :: Int, read [str !! 2] :: Int)
 
 -- Adiciona uma posição a uma lista de posições (região)
 appendPos :: [Position] -> Position -> [Position]
-appendPos list pos = list ++ [pos]
+appendPos list pos = pos : list
 
 -- Adiciona uma região a uma lista de regiões
+-- Exemplo: adiciona [(x,y),(a,b)] a uma lista 
 appendReg :: [Region] -> Region -> [Region]
-appendReg list reg = list ++ [reg]
+appendReg list reg = reg : list
+
+-- Converte uma string em região
+-- Recebe "0,0 0,1 0,2 1,0" e retorna [(0,0),(0,1),(0,2),(1,0)]
+convertStrReg :: Int -> [Char] -> Region -> Region
+convertStrReg (-1) _ reg = return reg!!0
+convertStrReg n str reg = do
+    let test = drop (n-3) str
+    let pos = convertStrPos (take 3 test)
+    let aux = appendPos reg pos
+    convertStrReg (n-4) str aux
+    
 
 -- Slice list
 slice xs i k | i > 0 = take (k - i) $ drop (i) xs
