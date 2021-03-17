@@ -27,6 +27,22 @@ dimension (n:_) = n
 convertStrInt :: [Char] -> Int
 convertStrInt str = read str :: Int
 
+-- Definição de novos tipos
+type Position = (Int, Int)
+type Region = [Position]
+
+-- Converte uma string em posição
+convertStrPos :: [Char] -> Position
+convertStrPos str = (read [str !! 0] :: Int, read [str !! 2] :: Int)
+
+-- Adiciona uma posição a uma lista de posições (região)
+appendPos :: [Position] -> Position -> [Position]
+appendPos list pos = list ++ [pos]
+
+-- Adiciona uma região a uma lista de regiões
+appendReg :: [Region] -> Region -> [Region]
+appendReg list reg = list ++ [reg]
+
 -- Slice list
 slice xs i k | i > 0 = take (k - i) $ drop (i) xs
 
