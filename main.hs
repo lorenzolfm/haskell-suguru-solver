@@ -52,9 +52,10 @@ main = do
 
   let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
-
   let board = [ [1..5] | x <- [1..(n*n)]]
   print board
   print (length board)
 
+  print (board !! 4) -- board[0][0]
 
+  print (take 4 ++ val_5)
