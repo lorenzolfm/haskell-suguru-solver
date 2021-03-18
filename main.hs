@@ -1,45 +1,60 @@
-module Main (main) where
+type Position = (Int, Int)
+type PossibleValues = [Int]
+type GroupId = Int
+type Group = [(Int, Int, GroupId)]
+type Cell = (Position, PossibleValues, GroupId)
 
-import FileIO
-import System.IO
-
-removeSpaces :: String -> String
-removeSpaces [] = []
-removeSpaces (x:xs)
-    | (x == ' ') = removeSpaces xs
-    | otherwise = x : removeSpaces (xs)
-
-removeComma :: String -> String
-removeComma [] = []
-removeComma (x:xs)
-    | (x == ',') = removeComma xs
-    | otherwise = x : removeComma (xs)
-
-converToChar :: String -> [Char]
-converToChar str = str
+setValue :: [[Int]] -> Position -> Int -> [[Int]]
+setValue matrix pos val = (take (fst pos) matrix) ++ [(take (snd pos) (matrix!!(fst pos))) ++ [val] ++ (drop ((snd pos)+1) (matrix!!(fst pos)))] ++ (drop ((fst pos)+1) matrix)
 
 main = do
-  -- FileIO
+  let n = 5
+  let numGroups = 6
+  let numStartingValues = 6
 
-  -- Nome do arquivo passado como argumento
-  filePath <- getFilePath
-  listOfInputs <- getFileContents filePath
+  let groups = [[(0,0), (0,1), (0,2), (1,0)], [(0,3), (0,4), (1,4), (2,4), (3,4)], [(1,1), (1,2), (2,0), (2,1), (3,0)], [(1,3), (2,2), (2,3), (3,1), (3,2)], [(3,3), (4,0), (4,1), (4,2), (4,3)], [(4,4)]]
 
-  -- Dimensão da Matriz
-  matrixSize <- getInputData listOfInputs 0
-  -- Número de Grupos
-  numOfGroups <- getInputData listOfInputs 1
-  -- Número de posições pré-preenchidas
-  numOfInitiallyFilledCells <- getInputData listOfInputs 2
+  -- 0,0 0 1
+  let pos_0 = (0,0)
+  let val_0 = [1]
+  let gId_0 = 0
+  let startVal_0 = (pos_0, val_0, gId_0)
 
-  -- Regiões (lista de strings)
-  let listOfGroupStrings = slice listOfInputs 3 (4 + numOfGroups - 1)
+  -- 0,3 1 5
+  let pos_1 = (0,3)
+  let val_1 = [5]
+  let gId_1 = 1
+  let startVal_1 = (pos_1, val_1, gId_1)
+
+  -- 2,0 2 1
+  let pos_2 = (2,0)
+  let val_2 = [1]
+  let gId_2 = 2
+  let startVal_2 = (pos_2, val_2, gId_2)
+
+  -- 2,2 3 2
+  let pos_3 = (2,2)
+  let val_3 = [2]
+  let gId_3 = 3
+  let startVal_3 = (pos_3, val_3, gId_3)
+
+  -- 2,4 1 4
+  let pos_4 = (2,4)
+  let val_4 = [4]
+  let gId_4 = 1
+  let startVal_4 = (pos_4, val_4, gId_4)
+
+  -- 4,1 4 3
+  let pos_5 = (4,1)
+  let val_5 = [3]
+  let gId_5 = 4
+  let startVal_5 = (pos_5, val_5, gId_5)
+
+  let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
 
-  -- Células pré-preenchidas (lista de strings)
-  let listOfInitiallyFilledCellsStrings = slice listOfInputs (3 + numOfGroups) (4 + numOfGroups + numOfInitiallyFilledCells - 1)
-  ---- Fim IO
+  let board = [ [1..5] | x <- [1..(n*n)]]
+  print board
+  print (length board)
 
-  ---- Estruturação dos dados
 
-  print listOfGroupStrings
