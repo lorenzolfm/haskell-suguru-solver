@@ -38,15 +38,8 @@ main = do
 
   -- Células pré-preenchidas (lista de strings)
   let listOfInitiallyFilledCellsStrings = slice listOfInputs (3 + numOfGroups) (4 + numOfGroups + numOfInitiallyFilledCells - 1)
-
   ---- Fim IO
 
-  ---- Estruturação de dados
-  --
+  ---- Estruturação dos dados
 
   print listOfGroupStrings
-  let first = listOfGroupStrings !! 0
-  let list = map read $ words first :: [Int]
-  print list
-  let f = filter odd list
-  print f

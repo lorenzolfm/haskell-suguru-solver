@@ -51,6 +51,3 @@ convertStrReg n str reg = do
   let pos = convertStrPos (take 3 test)
   let aux = appendPos reg pos
   convertStrReg (n-4) str aux
-
---convertStrToTuples :: String -> [(Int, Int)]
---convertStrToTuples
