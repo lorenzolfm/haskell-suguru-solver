@@ -2,7 +2,21 @@ module Main (main) where
 
 import FileIO
 import System.IO
---import Control.Monad
+
+removeSpaces :: String -> String
+removeSpaces [] = []
+removeSpaces (x:xs)
+    | (x == ' ') = removeSpaces xs
+    | otherwise = x : removeSpaces (xs)
+
+removeComma :: String -> String
+removeComma [] = []
+removeComma (x:xs)
+    | (x == ',') = removeComma xs
+    | otherwise = x : removeComma (xs)
+
+converToChar :: String -> [Char]
+converToChar str = str
 
 main = do
   -- FileIO
@@ -18,23 +32,21 @@ main = do
   -- Número de posições pré-preenchidas
   numOfInitiallyFilledCells <- getInputData listOfInputs 2
 
-  print matrixSize
-  print numOfGroups
-  print numOfInitiallyFilledCells
-
   -- Regiões (lista de strings)
   let listOfGroupStrings = slice listOfInputs 3 (4 + numOfGroups - 1)
-  print listOfGroupStrings
+
 
   -- Células pré-preenchidas (lista de strings)
   let listOfInitiallyFilledCellsStrings = slice listOfInputs (3 + numOfGroups) (4 + numOfGroups + numOfInitiallyFilledCells - 1)
-  print listOfInitiallyFilledCellsStrings
+
   ---- Fim IO
 
   ---- Estruturação de dados
+  --
 
-  ---- Matriz do jogo
-  --let puzzle = matrix n n 0
-  ----print puzzle
-
-  --hClose handle
+  print listOfGroupStrings
+  let first = listOfGroupStrings !! 0
+  let list = map read $ words first :: [Int]
+  print list
+  let f = filter odd list
+  print f
