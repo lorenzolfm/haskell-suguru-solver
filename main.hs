@@ -77,3 +77,6 @@ main = do
 
   let a = initVal newBoard (0,0) (val_5!!0) n
   print a
+
+  -- Modificar célula -> lista deve ter o tamanho da região, ex: tamReg = 4 -> [1,2,3,4]
+  -- Laço: p/ todos os valores iniciais, deixar eles como único valor na lista da célula
