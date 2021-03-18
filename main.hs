@@ -19,6 +19,9 @@ setValue' matrix pos val dim = do
   let list = matrix !! (dim * (fst pos) + (snd pos))
   (take (dim * (fst pos) + (snd pos)) matrix) ++ [removeValue list val] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
 
+initVal :: [[Int]] -> Position -> Int -> Int -> [[Int]]
+initVal matrix pos val dim = (take (dim * (fst pos) + (snd pos)) matrix) ++ [[val]] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
+
 -- Remove um valor da lista
 removeValue :: [Int] -> Int -> [Int]
 removeValue list val= [x | x <- list, x /= val]
@@ -68,6 +71,9 @@ main = do
 
   let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
-  let board = [ [1..5] | x <- [1..(n*n)]]
+  let board = [[1..5] | x <- [1..(n*n)]]
   let newBoard = setValue' board (1,1) 3 n
-  print newBoard
+  --print newBoard
+
+  let a = initVal newBoard (0,0) (val_5!!0) n
+  print a
