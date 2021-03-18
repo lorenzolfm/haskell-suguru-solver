@@ -4,8 +4,22 @@ type GroupId = Int
 type Group = [(Int, Int, GroupId)]
 type Cell = (Position, PossibleValues, GroupId)
 
-setValue :: [[Int]] -> Position -> Int -> [[Int]]
-setValue matrix pos val = (take (fst pos) matrix) ++ [(take (snd pos) (matrix!!(fst pos))) ++ [val] ++ (drop ((snd pos)+1) (matrix!!(fst pos)))] ++ (drop ((fst pos)+1) matrix)
+--setValue :: [[Int]] -> Position -> Int -> Int -> [Int]
+--setValue list pos val dim = (take (dim * (fst pos) + (snd pos)) list) ++ [val] ++ (drop ((dim * (fst pos) + (snd pos))+1) list)
+
+--setValue :: [[Int]] -> Position -> Int -> [[Int]]
+--setValue matrix pos val = (take (fst pos) matrix) ++ [(take (snd pos) (matrix!!(fst pos))) ++ [val] ++ (drop ((snd pos)+1) (matrix!!(fst pos)))] ++ (drop ((fst pos)+1) matrix)
+
+
+--setValue' :: [[Int]] -> Position -> Int -> [[Int]]
+--setValue' matrix pos val = (take (fst pos) matrix) ++ [[val]] ++ (drop ((fst pos)+1) matrix)
+
+setValue' :: [[Int]] -> Position -> Int -> Int -> [[Int]]
+setValue' matrix pos val dim = (take (dim * (fst pos) + (snd pos)) matrix) ++ [[val]] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
+
+-- Remove um valor da lista
+removeValue :: [Int] -> Int -> [Int]
+removeValue list val= [x | x <- list, x /= val]
 
 main = do
   let n = 5
@@ -53,9 +67,10 @@ main = do
   let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
   let board = [ [1..5] | x <- [1..(n*n)]]
-  print board
-  print (length board)
 
-  print (board !! 4) -- board[0][0]
+  let oneCell = board !! 0
+  let newList = removeValue oneCell 3
+  print newList
 
-  print (take 4 ++ val_5)
+  let newList2 = removeValue newList 2
+  print newList2
