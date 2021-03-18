@@ -15,7 +15,9 @@ type Cell = (Position, PossibleValues, GroupId)
 --setValue' matrix pos val = (take (fst pos) matrix) ++ [[val]] ++ (drop ((fst pos)+1) matrix)
 
 setValue' :: [[Int]] -> Position -> Int -> Int -> [[Int]]
-setValue' matrix pos val dim = (take (dim * (fst pos) + (snd pos)) matrix) ++ [[val]] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
+setValue' matrix pos val dim = do
+  let list = matrix !! (dim * (fst pos) + (snd pos))
+  (take (dim * (fst pos) + (snd pos)) matrix) ++ [removeValue list val] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
 
 -- Remove um valor da lista
 removeValue :: [Int] -> Int -> [Int]
@@ -67,10 +69,5 @@ main = do
   let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
   let board = [ [1..5] | x <- [1..(n*n)]]
-
-  let oneCell = board !! 0
-  let newList = removeValue oneCell 3
-  print newList
-
-  let newList2 = removeValue newList 2
-  print newList2
+  let newBoard = setValue' board (1,1) 3 n
+  print newBoard
