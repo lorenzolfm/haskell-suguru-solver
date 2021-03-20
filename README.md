@@ -24,7 +24,9 @@ O objetivo do trabalho é desenvolver um resolvedor do puzzle **Suguru** em **Ha
 ghc --make main.hs && ./main
 ```
 
+### Algoritmo:
 
+1. Remover de cada célula, os valores já definidos na região
 
 
 

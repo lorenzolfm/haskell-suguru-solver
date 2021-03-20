@@ -137,6 +137,21 @@ createBoard groups startValues dim = do
     let board = initBoard ([[0] | x <- [1..(dim*dim)]]) groups 0 dim
     setAllStartingValues board startValues dim
 
+
+{-|
+    Retorna True se o valor da posição está definido,
+    caso contrário retorna False
+
+    Param: [Int] -> Lista de possíveis valores
+    Return: Bool -> True se tamanho = 1, False caso contrário
+-}
+isValueSet :: [Int] -> Bool
+isValueSet possibleValues = do
+    if (length possibleValues == 1) then
+        True
+    else
+        False
+
 main = do
     let n = 5
     let groups = [[(0,0), (0,1), (0,2), (1,0)], [(0,3), (0,4), (1,4), (2,4), (3,4)], [(1,1), (1,2), (2,0), (2,1), (3,0)], [(1,3), (2,2), (2,3), (3,1), (3,2)], [(3,3), (4,0), (4,1), (4,2), (4,3)], [(4,4)]]
@@ -179,4 +194,7 @@ main = do
 
     let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
-    print (createBoard groups startValues n)
+    let board = createBoard groups startValues n
+
+    -- Remover das células os valores já definidos na região a qual ela pertence
+    print board
