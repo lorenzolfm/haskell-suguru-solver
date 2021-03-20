@@ -1,0 +1,5 @@
+# Ignorar tudo, exceto pelo .hs
+*
+!*.txt
+!*.hs
+!README.md
