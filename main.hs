@@ -62,7 +62,7 @@ initBoard matrix groups index dim   | index == (dim * dim) = matrix
     let x = index `div` dim
     let y = index `mod` dim
     let pos = (x, y)
-    let n = getGroupIdOfPosition groups pos 0
+    let n = getGroupSizeOfPosition groups pos 0
     let values = [1..n]
     -- Função setCorrectValue é usada p/ inicializar o tabuleiro, antes de inserir os valores pré-preenchidos
     let new_matrix = setCorrectValue matrix pos values dim
@@ -79,21 +79,32 @@ getGroupSize :: [Position] -> Int
 getGroupSize group = length group
 
 {-|
-    Retorna o ID do grupo ao qual a posição pertence
+    Retorna a Id grupo ao qual a posição pertence
 
-    TODO: Fazer adaptação para pegar `groupID` ou retornar o grupo em si
+    Param: [[Position]] -> Lista de grupos
+    Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
+    Param: Int -> Id do grupo, usado para recursão.
+    Return: Int -> Tamanho do grupo
+-}
+getGroupIdOfPosition :: [[Position]] -> Position -> Int -> Int
+getGroupIdOfPosition groups pos groupID = do
+    if (isPositionInGroup (groups !! groupID) pos 0) then
+          groupID
+        else (getGroupIdOfPosition groups pos (groupID + 1))
+
+{-|
+    Retorna o tamanho do grupo ao qual a posição pertence
 
     Param: [[Position]] -> Lista de grupos
     Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
     Param: Int -> Id do grupo, usado para recursão.
     Return: Int -> Id do grupo.
 -}
-getGroupIdOfPosition :: [[Position]] -> Position -> Int -> Int
-getGroupIdOfPosition groups pos groupID = do
+getGroupSizeOfPosition :: [[Position]] -> Position -> Int -> Int
+getGroupSizeOfPosition groups pos groupID = do
     if (isPositionInGroup (groups !! groupID) pos 0) then
          length (groups !! groupID)
         else (getGroupIdOfPosition groups pos (groupID + 1))
-
 {-|
     Verifica se uma posição pertence a um grupo.
 
@@ -102,6 +113,7 @@ getGroupIdOfPosition groups pos groupID = do
     Param: Int -> Id do grupo da posição, usado para recursão.
     Return: Bool -> Valor booleano que indica se a posição pertence ao grupo.
 -}
+
 isPositionInGroup :: [Position] -> Position -> Int -> Bool
 isPositionInGroup group pos posID = do
     if (posID == (length group)) then
@@ -166,13 +178,5 @@ main = do
     let startVal_5 = (pos_5, val_5)
 
     let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
-    --print (fst (startValues !! 0))
 
-    let board = [[1..5] | x <- [1..(n*n)]]
-    --print board
-    let new_board = initBoard board groups 0 n
-    --print new_board
-
-    let new = setAllStartingValues new_board startValues n
-    print new
     print (createBoard groups startValues n)
