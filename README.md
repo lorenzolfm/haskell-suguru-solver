@@ -18,54 +18,13 @@ O objetivo do trabalho é desenvolver um resolvedor do puzzle **Suguru** em **Ha
 ### Compilação e Execução
 
 * Compile o programa com: `ghc --make main.hs`.
-* Passe o arquivo de entrada como argumento para executar o resolvedor: `./main arquivoDeEntrada.txt`.
+* Execute com: `./main`.
 
-### Entrada/Saída
-
-* O arquivo de entrada representa o tabuleiro em seu estado inicial.
-    * A primeira linha contém a dimensão do tabuleiro (*n*);
-    * A segunda linha contém o número de grupos do tabuleiro (*numOfGroups*);
-    * A terceira linha contém o número de células já preenchidas (*numOfInitiallyFilledCells*);
-    * Da quarta linha, até a linha (4 + *numOfInitiallyFilledCells*) estão inseridas as coordenadas que cada grupo contém;
-    * Depois disso até o final do arquivo encontram-se as posições já preenchidas na matriz.
-        * Posição(i,j) idDoGrupo Valor
-
-* Exemplo:
 ```
-5
-6
-6
-0,0 0,1 0,2 1,0
-0,3 0,4 1,4 2,4 3,4
-1,1 1,2 2,0 2,1 3,0
-1,3 2,2 2,3 3,1 3,2
-3,3 4,0 4,1 4,2 4,3
-4,4
-0,0 0 1
-0,3 1 5
-2,0 2 1
-2,2 3 2
-2,4 1 4
-4,1 4 3
+ghc --make main.hs && ./main
 ```
 
-* Dimensão da matriz: 5;
-* Número de grupos: 6;
-* Número de valores já preenchidos: 6;
-* Grupos:
-    * Grupo 0: (0,0), (0,1), (0,2), (1,0);
-    * Grupo 1: (0,3), (0,4), (1,4), (2,4), (3,4);
-    * Grupo 2: (1,1), (1,2), (2,0), (2,1), (3,0);
-    * Grupo 3: (1,3), (2,2), (2,3), (3,1), (3,2);
-    * Grupo 4: (3,3), (4,0), (4,1), (4,2), (4,3);
-    * Grupo 5: (4,4);
-* Células já preenchidas:
-    * Célula na posição 0,0, pertence ao grupo 0 preenchida com o valor 1;
-    * Célula na posição 0,3, pertence ao grupo 1 preenchida com o valor 5;
-    * Célula na posição 2,0, pertence ao grupo 2 preenchida com o valor 1;
-    * Célula na posição 2,2, pertence ao grupo 3 preenchida com o valor 2;
-    * Célula na posição 2,4, pertence ao grupo 1 preenchida com o valor 4;
-    * Célula na posição 4,1, pertence ao grupo 4 preenchida com o valor 1;
+
 
 
 

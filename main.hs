@@ -2,21 +2,60 @@ type Position = (Int, Int)
 type PossibleValues = [Int]
 type GroupId = Int
 type Group = [(Int, Int, GroupId)]
-type Cell = (Position, [Int])
+type Cell = (Position, PossibleValues)
 
--- Insere no tabuleiro um valor inicial
-initVal :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
-initVal matrix pos val dim = (take (dim * (fst pos) + (snd pos)) matrix) ++ [val] ++ (drop ((dim * (fst pos) + (snd pos))+1) matrix)
+{-|
+    Remove o inteiro passado como argumento da lista
 
--- Chama a função `initVal` para cada valor inicial
-startVal :: [[Int]] -> [Cell] -> Int -> [[Int]]
-startVal matrix [] _ = matrix
-startVal matrix startValues dim = do
-    let new_matrix = initVal matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
+    Param: [Int] -> Uma lista de inteiros, que contém o valor a ser removido
+    Param: Int -> O inteiro a ser removido da lista
+    Return: [Int] -> A lista com o valor removido
+-}
+removeValue :: [Int] -> Int -> [Int]
+removeValue list val= [x | x <- list, x /= val]
+
+{-|
+    Insere no tabuleiro, na posição passada como argumento,
+    uma lista que contém um único elemento, sendo esse o elemento
+    correto que ocupa a posição no tabuleiro.
+
+    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Position -> A posição a ser inserido o valor correto.
+    Param: [Int] -> Uma lista que contém apenas o valor a ser inserido na lista.
+    Param: Int -> A dimensão do tabuleiro (Matrix NxN)
+    Return: [[Int]] -> Tabuleiro com o valor correto inserido.
+-}
+setCorretVal :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
+setCorretVal matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
+
+{-|
+    Função de inicialização do tabuleiro.
+    Para cada valor inicial já pré-preenchido, chama setCorretVal.
+
+    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Cell -> Lista de células. Os valores inicias que o tabuleiro contém.
+    Param: Int -> Dimensão do tabuleiro (matriz NxN)
+    Return: [[Int]] -> Tabuleiro inicializado.
+-}
+setAllStartingValues :: [[Int]] -> [Cell] -> Int -> [[Int]]
+setAllStartingValues matrix [] _ = matrix
+setAllStartingValues matrix startValues dim = do
+    let new_matrix = setCorretVal matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
     let new_values = drop 1 startValues
-    startVal new_matrix new_values dim
+    setAllStartingValues new_matrix new_values dim
 
--- Inicializa o tabuleiro, cada posição recebe a lista de possibilidades correta de acordo com a região ao qual pertence
+{-|
+    Inicializa o tabuleiro, cada posição recebe a lista possíveis valores
+    de acordo com o tamanho da região ao qual a posição pertence pertence.
+
+    Se a região possui 4 posições, então cada posição pertencente a essa região recebe:
+    [1,2,3,4]
+
+    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
+    Param: [[Position]] -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
+    Param: Int -> Índice usado p/ controlar a recursividade.
+    Return: [[Int]] -> Tabuleiro inicializado.
+-}
 initBoard :: [[Int]] -> [[Position]] -> Int -> Int -> [[Int]]
 initBoard matrix groups index dim   | index == (dim * dim) = matrix
                                     | otherwise = do
@@ -25,17 +64,29 @@ initBoard matrix groups index dim   | index == (dim * dim) = matrix
     let pos = (x, y)
     let n = getPosGroup groups pos 0
     let values = [1..n]
-    let new_matrix = initVal matrix pos values dim
+    let new_matrix = setCorretVal matrix pos values dim
 
     initBoard new_matrix groups (index + 1) dim
 
+{-|
+    Retorna o tamanho do grupo, ou seja, quantos posições ele possui
 
--- Retorna o tamanho do grupo, ou seja, quantos posições ele possui
+    Param: [Position] -> Lista de posições pertencentes ao grupo.
+    Return: Int -> Tamanho do grupo
+-}
 getSizeGroup :: [Position] -> Int
 getSizeGroup group = length group
 
--- Retorna o ID do grupo ao qual a posição pertence
--- Fazer adaptação para pegar `groupID` ou retornar o grupo em si
+{-|
+    Retorna o ID do grupo ao qual a posição pertence
+
+    TODO: Fazer adaptação para pegar `groupID` ou retornar o grupo em si
+
+    Param: [[Position]] -> Lista de grupos
+    Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
+    Param: Int -> Id do grupo, usado para recursão.
+    Return: Int -> Id do grupo.
+-}
 getPosGroup :: [[Position]] -> Position -> Int -> Int
 getPosGroup groups pos groupID = do
     if (checkPosInGroup (groups !! groupID) pos 0) then
@@ -43,6 +94,14 @@ getPosGroup groups pos groupID = do
         else (getPosGroup groups pos (groupID + 1))
 
 -- Verifica se a posição pertence ao grupo
+{-|
+    Verifica se uma posição pertence a um grupo.
+
+    Param: [Position] -> Grupo
+    Param: Position -> Posição que deseja-se descobri o Id de seu Grupo.
+    Param: Int -> Id do grupo da posição, usado para recursão.
+    Return: Bool -> Valor booleano que indica se a posição pertence ao grupo.
+-}
 checkPosInGroup :: [Position] -> Position -> Int -> Bool
 checkPosInGroup group pos posID = do
     if (posID == (length group)) then
@@ -52,11 +111,19 @@ checkPosInGroup group pos posID = do
                 True
                 else (checkPosInGroup group pos (posID + 1))
 
--- Cria um tabuleiro, com os requisitos corretos e com os valores iniciais
+
+{-|
+    Cria um tabuleiro, com os requisitos corretos e com os valores iniciais
+
+    Param: [[Position]] -> Tabuleiro
+    Param: [Cell] -> Lista de células, os valores iniciais.
+    Param: Int -> Dimensão do tabuleiro.
+    Return: [[Int]] -> Tabuleiro criado
+-}
 createBoard :: [[Position]] -> [Cell] -> Int -> [[Int]]
 createBoard groups startValues dim = do
     let board = initBoard ([[0] | x <- [1..(dim*dim)]]) groups 0 dim
-    startVal board startValues dim
+    setAllStartingValues board startValues dim
 
 main = do
     let n = 5
@@ -106,6 +173,6 @@ main = do
     let new_board = initBoard board groups 0 n
     --print new_board
 
-    let new = startVal new_board startValues n
+    let new = setAllStartingValues new_board startValues n
     print new
     print (createBoard groups startValues n)
