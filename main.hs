@@ -11,8 +11,8 @@ type Cell = (Position, PossibleValues)
     Param: Int -> O inteiro a ser removido da lista
     Return: [Int] -> A lista com o valor removido
 -}
-removeValue :: [Int] -> Int -> [Int]
-removeValue list val= [x | x <- list, x /= val]
+removeValueFromPossibleValues :: [Int] -> Int -> [Int]
+removeValueFromPossibleValues list val= [x | x <- list, x /= val]
 
 {-|
     Insere no tabuleiro, na posição passada como argumento,
@@ -25,12 +25,12 @@ removeValue list val= [x | x <- list, x /= val]
     Param: Int -> A dimensão do tabuleiro (Matrix NxN)
     Return: [[Int]] -> Tabuleiro com o valor correto inserido.
 -}
-setCorretVal :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
-setCorretVal matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
+setCorrectValue :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
+setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
 {-|
     Função de inicialização do tabuleiro.
-    Para cada valor inicial já pré-preenchido, chama setCorretVal.
+    Para cada valor inicial já pré-preenchido, chama setCorrectValue.
 
     Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
     Param: Cell -> Lista de células. Os valores inicias que o tabuleiro contém.
@@ -40,7 +40,7 @@ setCorretVal matrix position correctValue dimension = (take (dimension * (fst po
 setAllStartingValues :: [[Int]] -> [Cell] -> Int -> [[Int]]
 setAllStartingValues matrix [] _ = matrix
 setAllStartingValues matrix startValues dim = do
-    let new_matrix = setCorretVal matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
+    let new_matrix = setCorrectValue matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
     let new_values = drop 1 startValues
     setAllStartingValues new_matrix new_values dim
 
@@ -62,9 +62,10 @@ initBoard matrix groups index dim   | index == (dim * dim) = matrix
     let x = index `div` dim
     let y = index `mod` dim
     let pos = (x, y)
-    let n = getPosGroup groups pos 0
+    let n = getGroupIdOfPosition groups pos 0
     let values = [1..n]
-    let new_matrix = setCorretVal matrix pos values dim
+    -- Função setCorrectValue é usada p/ inicializar o tabuleiro, antes de inserir os valores pré-preenchidos
+    let new_matrix = setCorrectValue matrix pos values dim
 
     initBoard new_matrix groups (index + 1) dim
 
@@ -74,8 +75,8 @@ initBoard matrix groups index dim   | index == (dim * dim) = matrix
     Param: [Position] -> Lista de posições pertencentes ao grupo.
     Return: Int -> Tamanho do grupo
 -}
-getSizeGroup :: [Position] -> Int
-getSizeGroup group = length group
+getGroupSize :: [Position] -> Int
+getGroupSize group = length group
 
 {-|
     Retorna o ID do grupo ao qual a posição pertence
@@ -87,13 +88,12 @@ getSizeGroup group = length group
     Param: Int -> Id do grupo, usado para recursão.
     Return: Int -> Id do grupo.
 -}
-getPosGroup :: [[Position]] -> Position -> Int -> Int
-getPosGroup groups pos groupID = do
-    if (checkPosInGroup (groups !! groupID) pos 0) then
+getGroupIdOfPosition :: [[Position]] -> Position -> Int -> Int
+getGroupIdOfPosition groups pos groupID = do
+    if (isPositionInGroup (groups !! groupID) pos 0) then
          length (groups !! groupID)
-        else (getPosGroup groups pos (groupID + 1))
+        else (getGroupIdOfPosition groups pos (groupID + 1))
 
--- Verifica se a posição pertence ao grupo
 {-|
     Verifica se uma posição pertence a um grupo.
 
@@ -102,14 +102,14 @@ getPosGroup groups pos groupID = do
     Param: Int -> Id do grupo da posição, usado para recursão.
     Return: Bool -> Valor booleano que indica se a posição pertence ao grupo.
 -}
-checkPosInGroup :: [Position] -> Position -> Int -> Bool
-checkPosInGroup group pos posID = do
+isPositionInGroup :: [Position] -> Position -> Int -> Bool
+isPositionInGroup group pos posID = do
     if (posID == (length group)) then
         False
         else
             if ((group !! posID) == pos) then
                 True
-                else (checkPosInGroup group pos (posID + 1))
+                else (isPositionInGroup group pos (posID + 1))
 
 
 {-|
