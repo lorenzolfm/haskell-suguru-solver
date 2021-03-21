@@ -1,3 +1,5 @@
+import Debug.Trace
+
 type Position = (Int, Int)
 type PossibleValues = [Int]
 type GroupId = Int
@@ -12,7 +14,7 @@ type Cell = (Position, PossibleValues)
     Return: [Int] -> A lista com o valor removido
 -}
 removeValueFromPossibleValues :: [Int] -> Int -> [Int]
-removeValueFromPossibleValues list val= [x | x <- list, x /= val]
+removeValueFromPossibleValues list val = [x | x <- list, x /= val]
 
 {-|
     Insere no tabuleiro, na posição passada como argumento,
@@ -247,6 +249,34 @@ compareValue board group value index dim
         else
             compareValue board group value (index + 1) dim
 
+mainLoop :: [[Int]] -> [[Position]] -> [Int] -> Int -> Int -> [[Int]]
+mainLoop board _ [] _ _ = board
+mainLoop board groups list index dim = do
+    let indexOfBoard = list !! index
+    let possibleValues = board !! indexOfBoard
+    let x = indexOfBoard `div` dim
+    let y = indexOfBoard `mod` dim
+    let pos = (x, y)
+    let groupId = getGroupIdOfPosition groups pos 0
+
+    trace ("board = " ++ show board) (show board)
+    trace ("list = " ++ show list) (show list)
+    trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
+    trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
+    trace ("pos = " ++ show pos) (show pos)
+    trace ("groupId = " ++ show groupId) (show groupId)
+    trace ("")(show 1)
+    if (isValueSet possibleValues) then do
+       let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
+       let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) 0 dim
+       let newList = removeValueFromPossibleValues list indexOfBoard
+       if ((index + 1) == (length list)) then mainLoop board_1 groups newList 0 dim
+       else mainLoop board_1 groups newList (index + 1) dim
+    else do
+        let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
+        if ((index + 1) == (length list)) then mainLoop board_a groups list 0 dim
+        else mainLoop board_a groups list (index + 1) dim
+
 main = do
     let n = 5
     let groups = [[(0,0), (0,1), (0,2), (1,0)], [(0,3), (0,4), (1,4), (2,4), (3,4)], [(1,1), (1,2), (2,0), (2,1), (3,0)], [(1,3), (2,2), (2,3), (3,1), (3,2)], [(3,3), (4,0), (4,1), (4,2), (4,3)], [(4,4)]]
@@ -290,21 +320,11 @@ main = do
     let startValues = [startVal_0, startVal_1, startVal_2, startVal_3, startVal_4, startVal_5]
 
     let board = createBoard groups startValues n
+    let list = [0 .. ((n*n)-1)]
+    print list
 
     -- Remover das células os valores já definidos na região a qual ela pertence
-    --print board
-    --print ""
-    let newBoard = updatePossibleValuesBySetValuesInGroup board (groups !! 0) (0, 0) 1 0 5
-    let new = updatePossibleValuesBySetAdjecents newBoard (0,0) 1 0 5
-    --print newBoard
-    --print ""
-    print new
+    print board
     print ""
-
-    let other = comparePossibleValuesWithinGroup new (groups !! 0) (0, 0) 0 n
-    print other
-
-    --comparePossibleValuesWithinGroup board group position index dim
-    --let list = [1,2,3,4,5]
-    --let val = 6
-    --print (compareValue val list)
+    let solved = mainLoop board groups list 0 n
+    print solved
