@@ -28,6 +28,12 @@ removeValueFromPossibleValues list val= [x | x <- list, x /= val]
 setCorrectValue :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
 setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
+removeAndSet :: [[Int]] -> Position -> Int -> Int -> [[Int]]
+removeAndSet board position value dim = do
+    let i = (dim * (fst position)) + (snd position)
+    let newList = removeValueFromPossibleValues (board !! i) value
+    setCorrectValue board position newList dim
+
 {-|
     Função de inicialização do tabuleiro.
     Para cada valor inicial já pré-preenchido, chama setCorrectValue.
@@ -180,20 +186,17 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
       if (group !! index == position)
          then updatePossibleValuesBySetValuesInGroup board group position removedValue (index + 1) dim
          else do
-            let newList = removeValueFromPossibleValues (board !! i) removedValue
-            let updatedBoard = setCorrectValue board (x, y) newList dim
+            let updatedBoard = removeAndSet board (x,y) removedValue dim
             updatePossibleValuesBySetValuesInGroup updatedBoard group position removedValue (index + 1) dim
-
---setCorrectValue :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
---setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
 {-|
    Atualiza os possíveis valores de todas as células do tabuleiro
    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
 
 -}
-updatePossibleValuesBySetAdjecents :: [[Int]] -> [[Int]]
-updatePossibleValuesBySetAdjecents board = board
+updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Int ->[[Int]]
+updatePossibleValuesBySetAdjecents board position value dim = board
+
 
 main = do
     let n = 5
