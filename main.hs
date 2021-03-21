@@ -194,8 +194,23 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
 
 -}
-updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Int ->[[Int]]
-updatePossibleValuesBySetAdjecents board position value dim = board
+updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Int -> Int ->[[Int]]
+updatePossibleValuesBySetAdjecents board position removedValue index dim 
+    -- Talvez precise alterar
+    | (index > (dim * ((fst position) + 1)) + (snd position) + 1) = board
+    | otherwise = do
+        let x = index `div` dim
+        let y = index `mod` dim
+        if ((x,y) == position) 
+            then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim 
+            else 
+                if (x < 0 || x >= dim || y < 0 || y >= dim)
+                    then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim
+                    else do
+                        let updatedBoard = removeAndSet board (x,y) removedValue dim
+                        if (y == (snd position) + 1) 
+                            then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((dim * (x+1)) + (y-2)) dim
+                            else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (index + 1) dim
 
 
 main = do
@@ -246,4 +261,7 @@ main = do
     print board
     print ""
     let newBoard = updatePossibleValuesBySetValuesInGroup board (groups !! 0) (0, 0) 1 0 5
+    let new = updatePossibleValuesBySetAdjecents newBoard (0,0) 1 0 5
     print newBoard
+    print ""
+    print new
