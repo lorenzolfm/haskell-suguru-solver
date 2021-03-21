@@ -195,23 +195,57 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
 
 -}
 updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Int -> Int ->[[Int]]
-updatePossibleValuesBySetAdjecents board position removedValue index dim 
+updatePossibleValuesBySetAdjecents board position removedValue index dim
     -- Talvez precise alterar
     | (index > (dim * ((fst position) + 1)) + (snd position) + 1) = board
     | otherwise = do
         let x = index `div` dim
         let y = index `mod` dim
-        if ((x,y) == position) 
-            then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim 
-            else 
-                if (x < 0 || x >= dim || y < 0 || y >= dim)
-                    then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim
-                    else do
-                        let updatedBoard = removeAndSet board (x,y) removedValue dim
-                        if (y == (snd position) + 1) 
-                            then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((dim * (x+1)) + (y-2)) dim
-                            else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (index + 1) dim
+        if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
+            then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim
+            else do
+                let updatedBoard = removeAndSet board (x,y) removedValue dim
+                if (y == (snd position) + 1)
+                then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((dim * (x+1)) + (y-2)) dim
+                else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (index + 1) dim
 
+
+{-|
+    P/ todas células de uma região, se ela possui um possível valor
+    que não é compartilhado com mais nenhuma célula da região,
+    esse é o valor que a célula deve possuir.
+-}
+comparePossibleValuesWithinGroup :: [[Int]] -> [Position] -> Position -> Int -> Int -> [[Int]]
+comparePossibleValuesWithinGroup board group position index dim
+    | (index == (length (board !! ((dim * (fst (position))) + (snd (position)))))) = board
+    | otherwise = do
+      let x = fst (position)
+      let y = snd (position)
+      let i = (dim * (fst (position))) + (snd (position))
+      let possibleValues = board !! i
+      let comparedValue = possibleValues !! index
+
+      if (compareValue board group comparedValue 0 dim)
+      then do
+          let newBoard = setCorrectValue board position [comparedValue] dim
+          let otherBoard = updatePossibleValuesBySetValuesInGroup newBoard group position comparedValue 0 dim
+          updatePossibleValuesBySetAdjecents otherBoard position comparedValue index dim
+      else
+        comparePossibleValuesWithinGroup board group position (index + 1) dim
+
+compareValue :: [[Int]] -> [Position] -> Int ->  Int -> Int -> Bool
+compareValue board group value index dim
+    | (index == (length group)) = True
+    | otherwise = do
+        let x = fst (group !! index)
+        let y = snd (group !! index)
+        let i = (dim * (fst (group !! index))) + (snd (group !! index))
+        let possibleValues = board !! i
+
+        if (any (value==) possibleValues) then
+            False
+        else
+            compareValue board group value (index + 1) dim
 
 main = do
     let n = 5
@@ -258,10 +292,19 @@ main = do
     let board = createBoard groups startValues n
 
     -- Remover das células os valores já definidos na região a qual ela pertence
-    print board
-    print ""
+    --print board
+    --print ""
     let newBoard = updatePossibleValuesBySetValuesInGroup board (groups !! 0) (0, 0) 1 0 5
     let new = updatePossibleValuesBySetAdjecents newBoard (0,0) 1 0 5
-    print newBoard
-    print ""
+    --print newBoard
+    --print ""
     print new
+    print ""
+
+    let other = comparePossibleValuesWithinGroup new (groups !! 0) (0, 0) 0 n
+    print other
+
+    --comparePossibleValuesWithinGroup board group position index dim
+    --let list = [1,2,3,4,5]
+    --let val = 6
+    --print (compareValue val list)
