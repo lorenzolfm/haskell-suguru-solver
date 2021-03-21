@@ -152,6 +152,36 @@ isValueSet possibleValues = do
     else
         False
 
+{-|
+   Remove um valor passado como argumento de todas as células pertencentes a uma região
+
+  Param: [[Int]] -> O tabuleiro
+  Param: Int -> O Id do Grupo
+  Param: Int -> O valor a ser removido
+-}
+removeValueFromAllCellsWithinGroup :: [[Int]] -> Int -> Int -> [[Int]]
+removeValueFromAllCellsWithinGroup board groupId value = board
+
+{-|
+   Atualiza os possíveis valores de todas as células do tabuleiro
+   Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
+
+   Param:
+   Param:
+   Param:
+-}
+updatePossibleValuesBySetValuesInGroup :: [[Int]] -> [Position] -> Position -> Int -> [[Int]]
+updatePossibleValuesBySetValuesInGroup board group position removedValue = board
+
+
+{-|
+   Atualiza os possíveis valores de todas as células do tabuleiro
+   Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
+
+-}
+updatePossibleValuesBySetAdjecents :: [[Int]] -> [[Int]]
+updatePossibleValuesBySetAdjecents board = board
+
 main = do
     let n = 5
     let groups = [[(0,0), (0,1), (0,2), (1,0)], [(0,3), (0,4), (1,4), (2,4), (3,4)], [(1,1), (1,2), (2,0), (2,1), (3,0)], [(1,3), (2,2), (2,3), (3,1), (3,2)], [(3,3), (4,0), (4,1), (4,2), (4,3)], [(4,4)]]
