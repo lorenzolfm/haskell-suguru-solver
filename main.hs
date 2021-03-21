@@ -104,7 +104,7 @@ getGroupSizeOfPosition :: [[Position]] -> Position -> Int -> Int
 getGroupSizeOfPosition groups pos groupID = do
     if (isPositionInGroup (groups !! groupID) pos 0) then
          length (groups !! groupID)
-        else (getGroupIdOfPosition groups pos (groupID + 1))
+        else (getGroupSizeOfPosition groups pos (groupID + 1))
 {-|
     Verifica se uma posição pertence a um grupo.
 
@@ -170,9 +170,22 @@ removeValueFromAllCellsWithinGroup board groupId value = board
    Param:
    Param:
 -}
-updatePossibleValuesBySetValuesInGroup :: [[Int]] -> [Position] -> Position -> Int -> [[Int]]
-updatePossibleValuesBySetValuesInGroup board group position removedValue = board
+updatePossibleValuesBySetValuesInGroup :: [[Int]] -> [Position] -> Position -> Int -> Int -> Int -> [[Int]]
+updatePossibleValuesBySetValuesInGroup board group position removedValue index dim
+  | (index == (length group)) = board
+  | otherwise = do
+      let x = fst (group !! index)
+      let y = snd (group !! index)
+      let i = (dim * (fst (group !! index))) + (snd (group !! index))
+      if (group !! index == position)
+         then updatePossibleValuesBySetValuesInGroup board group position removedValue (index + 1) dim
+         else do
+            let newList = removeValueFromPossibleValues (board !! i) removedValue
+            let updatedBoard = setCorrectValue board (x, y) newList dim
+            updatePossibleValuesBySetValuesInGroup updatedBoard group position removedValue (index + 1) dim
 
+--setCorrectValue :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
+--setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
 {-|
    Atualiza os possíveis valores de todas as células do tabuleiro
@@ -228,3 +241,6 @@ main = do
 
     -- Remover das células os valores já definidos na região a qual ela pertence
     print board
+    print ""
+    let newBoard = updatePossibleValuesBySetValuesInGroup board (groups !! 0) (0, 0) 1 0 5
+    print newBoard
