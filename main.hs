@@ -203,12 +203,15 @@ updatePossibleValuesBySetAdjecents board position removedValue index dim
     | otherwise = do
         let x = index `div` dim
         let y = index `mod` dim
+        --trace ("x = " ++ show x) (show x)
+        --trace ("y = " ++ show y) (show y)
+        --trace ("") (show 1)
         if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
             then updatePossibleValuesBySetAdjecents board position removedValue (index + 1) dim
             else do
                 let updatedBoard = removeAndSet board (x,y) removedValue dim
                 if (y == (snd position) + 1)
-                then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((dim * (x+1)) + (y-2)) dim
+                then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((dim * (x+1)) + (y-1)) dim
                 else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (index + 1) dim
 
 
@@ -231,7 +234,7 @@ comparePossibleValuesWithinGroup board group position index dim
       then do
           let newBoard = setCorrectValue board position [comparedValue] dim
           let otherBoard = updatePossibleValuesBySetValuesInGroup newBoard group position comparedValue 0 dim
-          updatePossibleValuesBySetAdjecents otherBoard position comparedValue index dim
+          updatePossibleValuesBySetAdjecents otherBoard position comparedValue ((dim * (x-1) )+ y-1) dim
       else
         comparePossibleValuesWithinGroup board group position (index + 1) dim
 
@@ -260,17 +263,16 @@ mainLoop board groups list index dim = do
     let groupId = getGroupIdOfPosition groups pos 0
 
     trace ("board = " ++ show board) (show board)
-    trace ("list = " ++ show list) (show list)
-    trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
-    trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
-    trace ("pos = " ++ show pos) (show pos)
-    trace ("groupId = " ++ show groupId) (show groupId)
-    trace ("")(show 1)
+    --trace ("list = " ++ show list) (show list)
+    --trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
+    --trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
+    --trace ("pos = " ++ show pos) (show pos)
+    --trace ("groupId = " ++ show groupId) (show groupId)
     if (isValueSet possibleValues) then do
        let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
-       let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) 0 dim
+       let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) ((dim * (x-1)) + y-1) dim
        let newList = removeValueFromPossibleValues list indexOfBoard
-       if ((index + 1) == (length list)) then mainLoop board_1 groups newList 0 dim
+       if ((index + 1) == (length newList)) then mainLoop board_1 groups newList 0 dim
        else mainLoop board_1 groups newList (index + 1) dim
     else do
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
