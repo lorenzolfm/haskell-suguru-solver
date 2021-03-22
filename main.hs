@@ -1,17 +1,20 @@
 import Debug.Trace
 
+type Board = [[Int]]
+type Dimension = Int
+type PossibleValue = Int
 type Position = (Int, Int)
-type PossibleValues = [Int]
+type PossibleValues = [PossibleValue]
 type Cell = (Position, PossibleValues)
 
 {-|
-    Remove o inteiro passado como argumento da lista de possíveis valores
+    Remove o inteiro passado como argumento da lista de possíveis valores.
 
     Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido
     Param: Int -> O inteiro a ser removido da lista
     Return: PossibleValues -> A lista com o valor removido
 -}
-removeValueFromPossibleValues :: PossibleValues -> Int -> PossibleValues
+removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValues
 removeValueFromPossibleValues possibleValues value = [possibleValue | possibleValue <- possibleValues, possibleValue /= value]
 
 {-|
@@ -19,13 +22,13 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
     uma lista que contém um único elemento, sendo esse o elemento
     correto que ocupa a posição no tabuleiro.
 
-    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Position -> A posição a ser inserido o valor correto.
     Param: [Int] -> Uma lista que contém apenas o valor a ser inserido na lista.
     Param: Int -> A dimensão do tabuleiro (Matrix NxN)
-    Return: [[Int]] -> Tabuleiro com o valor correto inserido.
+    Return: Board -> Tabuleiro com o valor correto inserido.
 -}
-setCorrectValue :: [[Int]] -> Position -> [Int] -> Int -> [[Int]]
+setCorrectValue :: Board -> Position -> [Int] -> Int -> Board
 setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
 removeAndSet :: [[Int]] -> Position -> Int -> Int -> [[Int]]
