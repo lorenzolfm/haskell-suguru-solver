@@ -197,20 +197,20 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
 
 -}
 updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Position -> Int ->[[Int]]
-updatePossibleValuesBySetAdjecents board position removedValue positionVariable dim 
+updatePossibleValuesBySetAdjecents board position removedValue positionVariable dim
     -- Talvez precise alterar
     | (fst positionVariable) > ((fst position) + 1) = board
     | otherwise = do
         let x = fst positionVariable
         let y = snd positionVariable
-        if ((x < 0 || x >= dim) && (y == ((snd position) + 1))) 
+        if ((x < 0 || x >= dim || y < 0 || y >= dim) && (y == ((snd position) + 1)))
             then updatePossibleValuesBySetAdjecents board position removedValue ((x+1), (y-2)) dim
             else
             if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
                 then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
                 else do
                     let updatedBoard = removeAndSet board (x,y) removedValue dim
-                    if (y == ((snd position) + 1)) 
+                    if (y == ((snd position) + 1))
                         then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
                         else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
 
@@ -222,7 +222,7 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
 -}
 comparePossibleValuesWithinGroup :: [[Int]] -> [Position] -> Position -> Int -> Int -> [[Int]]
 comparePossibleValuesWithinGroup board group position index dim
-    | (index == (length (board !! ((dim * (fst (position))) + (snd (position)))))) = board
+    | (index >= (length (board !! ((dim * (fst (position))) + (snd (position)))))) = board
     | otherwise = do
       let x = fst (position)
       let y = snd (position)
@@ -230,53 +230,66 @@ comparePossibleValuesWithinGroup board group position index dim
       let possibleValues = board !! i
       let comparedValue = possibleValues !! index
 
-      if (compareValue board group comparedValue 0 dim)
+      trace ("position = " ++ show position) (show position)
+      trace ("Compared Value = " ++ show comparedValue) (show comparedValue)
+      trace ("possibleValues = " ++ show possibleValues)(show possibleValues)
+
+      if (compareValue board group position comparedValue 0 dim)
       then do
+          trace ("ola")(show 1)
           let newBoard = setCorrectValue board position [comparedValue] dim
           let otherBoard = updatePossibleValuesBySetValuesInGroup newBoard group position comparedValue 0 dim
           updatePossibleValuesBySetAdjecents otherBoard position comparedValue ((x-1), (y-1)) dim
       else
         comparePossibleValuesWithinGroup board group position (index + 1) dim
 
-compareValue :: [[Int]] -> [Position] -> Int ->  Int -> Int -> Bool
-compareValue board group value index dim
-    | (index == (length group)) = True
+compareValue :: [[Int]] -> [Position] -> Position -> Int ->  Int -> Int -> Bool
+compareValue board group pos value index dim
+    | (index >= (length group)) = True
     | otherwise = do
         let x = fst (group !! index)
         let y = snd (group !! index)
         let i = (dim * (fst (group !! index))) + (snd (group !! index))
         let possibleValues = board !! i
-
-        if (any (value==) possibleValues) then
-            False
-        else
-            compareValue board group value (index + 1) dim
+        if (pos == (x,y)) then compareValue board group pos value (index + 1) dim
+            else
+                --trace ("posVal dentro de compareValue = " ++ show possibleValues) (show possibleValues)
+                if (any (value==) possibleValues) then
+                    False
+                else
+                    compareValue board group pos value (index + 1) dim
 
 mainLoop :: [[Int]] -> [[Position]] -> [Int] -> Int -> Int -> [[Int]]
 mainLoop board _ [] _ _ = board
 mainLoop board groups list index dim = do
+    --trace ("index arg = " ++ show index) (show index)
+    --trace ("Lista = " ++ show list) (show list)
     let indexOfBoard = list !! index
     let possibleValues = board !! indexOfBoard
     let x = indexOfBoard `div` dim
     let y = indexOfBoard `mod` dim
     let pos = (x, y)
-    let groupId = getGroupIdOfPosition groups pos 0 
+    --trace ("pos = " ++ show pos) (show pos)
+    let groupId = getGroupIdOfPosition groups pos 0
 
-    trace ("board = " ++ show board) (show board)
-    --trace ("list = " ++ show list) (show list)
+    --trace ("board = " ++ show board) (show board)
     --trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
     --trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
-    trace ("pos = " ++ show pos) (show pos)
     --trace ("groupId = " ++ show groupId) (show groupId)
     if (isValueSet possibleValues) then do
+       --trace ("oi") (show 1)
        let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
        let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) ((x-1), (y-1)) dim
        let newList = removeValueFromPossibleValues list indexOfBoard
-       if ((index + 1) == (length newList)) then mainLoop board_1 groups newList 0 dim
-       else mainLoop board_1 groups newList (index + 1) dim
+       if ((index + 1) >= (length newList)) then do
+            mainLoop board_1 groups newList 0 dim
+       else do
+           mainLoop board_1 groups newList (index + 1) dim
     else do
+        --trace ("pos = " ++ show pos) (show pos)
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
-        if ((index + 1) == (length list)) then mainLoop board_a groups list 0 dim
+        --trace ("board_a = " ++ show board_a) (show board_a)
+        if ((index + 1) >= (length list)) then mainLoop board_a groups list 0 dim
         else mainLoop board_a groups list (index + 1) dim
 
 main = do
@@ -329,4 +342,4 @@ main = do
     print board
     print ""
     let solved = mainLoop board groups list 0 n
-    print solved
+    print (take 25 solved)
