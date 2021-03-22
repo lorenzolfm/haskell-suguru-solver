@@ -208,15 +208,6 @@ isValueSet possibleValues = do
     else
         False
 
-{-|
-   Remove um valor passado como argumento de todas as células pertencentes a uma região
-
-  Param: [[Int]] -> O tabuleiro
-  Param: Int -> O Id do Grupo
-  Param: Int -> O valor a ser removido
--}
-removeValueFromAllCellsWithinGroup :: [[Int]] -> Int -> Int -> [[Int]]
-removeValueFromAllCellsWithinGroup board groupId value = board
 
 {-|
    Atualiza os possíveis valores de todas as células do tabuleiro
