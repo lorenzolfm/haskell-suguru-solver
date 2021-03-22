@@ -24,12 +24,15 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Position -> A posição a ser inserido o valor correto.
-    Param: [Int] -> Uma lista que contém apenas o valor a ser inserido na lista.
+    Param: PossibleValue -> O valor correto da posição.
     Param: Int -> A dimensão do tabuleiro (Matrix NxN)
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
-setCorrectValue :: Board -> Position -> PossibleValue -> Int -> Board
-setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [[correctValue]] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
+setCorrectValue :: Board -> Position -> PossibleValue -> Dimension -> Board
+setCorrectValue board position correctValue dimension = do
+    let tIndex = (dimension * (fst position) + (snd position))
+    let dIndex = tIndex + 1
+    (take tIndex board) ++ [[correctValue]] ++ (drop dIndex board)
 
 setPossibleValues :: Board -> Position -> PossibleValues -> Dimension -> Board
 setPossibleValues board position possibleValues dimension = do
