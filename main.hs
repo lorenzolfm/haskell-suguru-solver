@@ -11,7 +11,7 @@ type Cell = (Position, PossibleValues)
     Remove o inteiro passado como argumento da lista de possíveis valores.
 
     Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido
-    Param: Int -> O inteiro a ser removido da lista
+    Param: PossibleValue -> O valor (inteiro) a ser removido da lista
     Return: PossibleValues -> A lista com o valor removido
 -}
 removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValues
