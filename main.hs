@@ -2,19 +2,17 @@ import Debug.Trace
 
 type Position = (Int, Int)
 type PossibleValues = [Int]
-type GroupId = Int
-type Group = [(Int, Int, GroupId)]
 type Cell = (Position, PossibleValues)
 
 {-|
-    Remove o inteiro passado como argumento da lista
+    Remove o inteiro passado como argumento da lista de possíveis valores
 
-    Param: [Int] -> Uma lista de inteiros, que contém o valor a ser removido
+    Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido
     Param: Int -> O inteiro a ser removido da lista
-    Return: [Int] -> A lista com o valor removido
+    Return: PossibleValues -> A lista com o valor removido
 -}
-removeValueFromPossibleValues :: [Int] -> Int -> [Int]
-removeValueFromPossibleValues list val = [x | x <- list, x /= val]
+removeValueFromPossibleValues :: PossibleValues -> Int -> PossibleValues
+removeValueFromPossibleValues possibleValues value = [possibleValue | possibleValue <- possibleValues, possibleValue /= value]
 
 {-|
     Insere no tabuleiro, na posição passada como argumento,
@@ -375,7 +373,7 @@ main = do
 
     let board = createBoard groups startValues n
     let list = [0 .. ((n*n)-1)]
-    print board
-    print ""
+    --print board
+    --print ""
     let solved = mainLoop board groups list 0 n
     print (solved)
