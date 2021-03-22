@@ -31,11 +31,14 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
 setCorrectValue :: Board -> Position -> [Int] -> Int -> Board
 setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
+setPossibleValues :: Board -> Position -> PossibleValues -> Dimension -> Board
+setPossibleValues board position possibleValues dimension = (take (dimension * (fst position) + (snd position)) board) ++ [possibleValues] ++ (drop ((dimension * (fst position) + (snd position))+1) board)
+
 removeAndSet :: [[Int]] -> Position -> Int -> Int -> [[Int]]
 removeAndSet board position value dim = do
     let i = (dim * (fst position)) + (snd position)
     let newList = removeValueFromPossibleValues (board !! i) value
-    setCorrectValue board position newList dim
+    setPossibleValues board position newList dim
 
 {-|
     Função de inicialização do tabuleiro.
