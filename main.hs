@@ -2,13 +2,16 @@ import Debug.Trace
 
 type Board = [[Int]]
 type Dimension = Int
-type PossibleValue = Int
-type Position = (Int, Int)
-type PossibleValues = [PossibleValue]
-type Group = [Position]
-type Groups = [Group]
 type Cell = (Position, PossibleValues)
 type StartingValues = [Cell]
+
+type Position = (Int, Int)
+
+type PossibleValue = Int
+type PossibleValues = [PossibleValue]
+
+type Group = [Position]
+type Groups = [Group]
 
 
 {-|
@@ -215,11 +218,16 @@ isValueSet possibleValues = do
    Atualiza os possíveis valores de todas as células do tabuleiro
    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
 
-   Param:
-   Param:
-   Param:
+   Param: Board ->
+   Param: Group ->
+   Param: Position ->
+   Param: PossibleValue ->
+   Param: Int ->
+   Param: Dimension ->
+
+   Return: Board ->
 -}
-updatePossibleValuesBySetValuesInGroup :: [[Int]] -> [Position] -> Position -> Int -> Int -> Int -> [[Int]]
+updatePossibleValuesBySetValuesInGroup :: Board -> Group -> Position -> PossibleValue -> Int -> Dimension -> Board
 updatePossibleValuesBySetValuesInGroup board group position removedValue index dim
   | (index == (length group)) = board
   | otherwise = do
@@ -237,9 +245,8 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
 
 -}
-updatePossibleValuesBySetAdjecents :: [[Int]] -> Position -> Int -> Position -> Int ->[[Int]]
+updatePossibleValuesBySetAdjecents :: Board -> Position -> PossibleValue -> Position -> Dimension -> Board
 updatePossibleValuesBySetAdjecents board position removedValue positionVariable dim
-    -- Talvez precise alterar
     | (fst positionVariable) > ((fst position) + 1) = board
     | otherwise = do
         let x = fst positionVariable
@@ -261,7 +268,7 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
     que não é compartilhado com mais nenhuma célula da região,
     esse é o valor que a célula deve possuir.
 -}
-comparePossibleValuesWithinGroup :: [[Int]] -> [Position] -> Position -> Int -> Int -> [[Int]]
+comparePossibleValuesWithinGroup :: Board -> Group -> Position -> Int -> Dimension -> Board
 comparePossibleValuesWithinGroup board group position index dim
     | (index >= (length (board !! ((dim * (fst (position))) + (snd (position)))))) = board
     | otherwise = do
@@ -279,7 +286,7 @@ comparePossibleValuesWithinGroup board group position index dim
       else
         comparePossibleValuesWithinGroup board group position (index + 1) dim
 
-compareValue :: [[Int]] -> [Position] -> Position -> Int ->  Int -> Int -> Bool
+compareValue :: Board -> Group -> Position -> PossibleValue -> Int -> Dimension -> Bool
 compareValue board group pos value index dim
     | (index >= (length group)) = True
     | otherwise = do
@@ -294,7 +301,7 @@ compareValue board group pos value index dim
                 else
                     compareValue board group pos value (index + 1) dim
 
-mainLoop :: [[Int]] -> [[Position]] -> [Int] -> Int -> Int -> [[Int]]
+mainLoop :: Board -> Groups -> [Int] -> Int -> Dimension -> Board
 mainLoop board _ [] _ _ = board
 mainLoop board groups list index dim = do
     let indexOfBoard = list !! index
@@ -416,7 +423,5 @@ main = do
 
     let board = createBoard groups startValues n
     let list = [0 .. ((n*n)-1)]
-    --print board
-    --print ""
     let solved = mainLoop board groups list 0 n
     print (solved)
