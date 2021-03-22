@@ -230,13 +230,8 @@ comparePossibleValuesWithinGroup board group position index dim
       let possibleValues = board !! i
       let comparedValue = possibleValues !! index
 
-      trace ("position = " ++ show position) (show position)
-      trace ("Compared Value = " ++ show comparedValue) (show comparedValue)
-      trace ("possibleValues = " ++ show possibleValues)(show possibleValues)
-
       if (compareValue board group position comparedValue 0 dim)
       then do
-          trace ("ola")(show 1)
           let newBoard = setCorrectValue board position [comparedValue] dim
           let otherBoard = updatePossibleValuesBySetValuesInGroup newBoard group position comparedValue 0 dim
           updatePossibleValuesBySetAdjecents otherBoard position comparedValue ((x-1), (y-1)) dim
@@ -253,7 +248,6 @@ compareValue board group pos value index dim
         let possibleValues = board !! i
         if (pos == (x,y)) then compareValue board group pos value (index + 1) dim
             else
-                --trace ("posVal dentro de compareValue = " ++ show possibleValues) (show possibleValues)
                 if (any (value==) possibleValues) then
                     False
                 else
@@ -262,22 +256,14 @@ compareValue board group pos value index dim
 mainLoop :: [[Int]] -> [[Position]] -> [Int] -> Int -> Int -> [[Int]]
 mainLoop board _ [] _ _ = board
 mainLoop board groups list index dim = do
-    --trace ("index arg = " ++ show index) (show index)
-    --trace ("Lista = " ++ show list) (show list)
     let indexOfBoard = list !! index
     let possibleValues = board !! indexOfBoard
     let x = indexOfBoard `div` dim
     let y = indexOfBoard `mod` dim
     let pos = (x, y)
-    --trace ("pos = " ++ show pos) (show pos)
     let groupId = getGroupIdOfPosition groups pos 0
 
-    --trace ("board = " ++ show board) (show board)
-    --trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
-    --trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
-    --trace ("groupId = " ++ show groupId) (show groupId)
     if (isValueSet possibleValues) then do
-       --trace ("oi") (show 1)
        let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
        let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) ((x-1), (y-1)) dim
        let newList = removeValueFromPossibleValues list indexOfBoard
@@ -286,9 +272,7 @@ mainLoop board groups list index dim = do
        else do
            mainLoop board_1 groups newList (index + 1) dim
     else do
-        --trace ("pos = " ++ show pos) (show pos)
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
-        --trace ("board_a = " ++ show board_a) (show board_a)
         if ((index + 1) >= (length list)) then mainLoop board_a groups list 0 dim
         else mainLoop board_a groups list (index + 1) dim
 
@@ -336,10 +320,10 @@ main = do
 
     let board = createBoard groups startValues n
     let list = [0 .. ((n*n)-1)]
-    print list
+    --print list
 
     -- Remover das células os valores já definidos na região a qual ela pertence
-    print board
-    print ""
+    --print board
+    --print ""
     let solved = mainLoop board groups list 0 n
-    print (take 25 solved)
+    print (solved)
