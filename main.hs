@@ -28,11 +28,14 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
     Param: Int -> A dimensão do tabuleiro (Matrix NxN)
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
-setCorrectValue :: Board -> Position -> [Int] -> Int -> Board
-setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [correctValue] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
+setCorrectValue :: Board -> Position -> PossibleValue -> Int -> Board
+setCorrectValue matrix position correctValue dimension = (take (dimension * (fst position) + (snd position)) matrix) ++ [[correctValue]] ++ (drop ((dimension * (fst position) + (snd position))+1) matrix)
 
 setPossibleValues :: Board -> Position -> PossibleValues -> Dimension -> Board
-setPossibleValues board position possibleValues dimension = (take (dimension * (fst position) + (snd position)) board) ++ [possibleValues] ++ (drop ((dimension * (fst position) + (snd position))+1) board)
+setPossibleValues board position possibleValues dimension = do
+    let tIndex = dimension * (fst position) + (snd position)
+    let dIndex = tIndex + 1
+    (take tIndex board) ++ [possibleValues] ++ (drop dIndex board)
 
 removeAndSet :: [[Int]] -> Position -> Int -> Int -> [[Int]]
 removeAndSet board position value dim = do
@@ -52,7 +55,7 @@ removeAndSet board position value dim = do
 setAllStartingValues :: [[Int]] -> [Cell] -> Int -> [[Int]]
 setAllStartingValues matrix [] _ = matrix
 setAllStartingValues matrix startValues dim = do
-    let new_matrix = setCorrectValue matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
+    let new_matrix = setPossibleValues matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
     let new_values = drop 1 startValues
     setAllStartingValues new_matrix new_values dim
 
@@ -76,8 +79,8 @@ initBoard matrix groups index dim   | index == (dim * dim) = matrix
     let pos = (x, y)
     let n = getGroupSizeOfPosition groups pos 0
     let values = [1..n]
-    -- Função setCorrectValue é usada p/ inicializar o tabuleiro, antes de inserir os valores pré-preenchidos
-    let new_matrix = setCorrectValue matrix pos values dim
+    -- Função setPossibleValues é usada p/ inicializar o tabuleiro, antes de inserir os valores pré-preenchidos
+    let new_matrix = setPossibleValues matrix pos values dim
 
     initBoard new_matrix groups (index + 1) dim
 
@@ -236,7 +239,7 @@ comparePossibleValuesWithinGroup board group position index dim
 
       if (compareValue board group position comparedValue 0 dim)
       then do
-          let newBoard = setCorrectValue board position [comparedValue] dim
+          let newBoard = setCorrectValue board position comparedValue dim
           let otherBoard = updatePossibleValuesBySetValuesInGroup newBoard group position comparedValue 0 dim
           updatePossibleValuesBySetAdjecents otherBoard position comparedValue ((x-1), (y-1)) dim
       else
