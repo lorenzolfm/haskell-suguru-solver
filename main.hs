@@ -5,6 +5,7 @@ type Dimension = Int
 type PossibleValue = Int
 type Position = (Int, Int)
 type PossibleValues = [PossibleValue]
+type Groups = [[Position]]
 type Cell = (Position, PossibleValues)
 type StartingValues = [Cell]
 
@@ -86,6 +87,7 @@ setPossibleValues board position possibleValues dimension = do
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: StartingValues -> Lista de células. Os valores inicias que o tabuleiro contém.
     Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
+
     Return: Board -> Tabuleiro inicializado.
 -}
 setAllStartingValues :: Board -> StartingValues -> Dimension -> Board
@@ -105,23 +107,26 @@ setAllStartingValues board startingValues dimension = do
     Se a região possui 4 posições, então cada posição pertencente a essa região recebe:
     [1,2,3,4]
 
-    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
-    Param: [[Position]] -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Groups -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
     Param: Int -> Índice usado p/ controlar a recursividade.
-    Return: [[Int]] -> Tabuleiro inicializado.
--}
-initBoard :: [[Int]] -> [[Position]] -> Int -> Int -> [[Int]]
-initBoard matrix groups index dim   | index == (dim * dim) = matrix
-                                    | otherwise = do
-    let x = index `div` dim
-    let y = index `mod` dim
-    let pos = (x, y)
-    let n = getGroupSizeOfPosition groups pos 0
-    let values = [1..n]
-    -- Função setPossibleValues é usada p/ inicializar o tabuleiro, antes de inserir os valores pré-preenchidos
-    let new_matrix = setPossibleValues matrix pos values dim
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
 
-    initBoard new_matrix groups (index + 1) dim
+    Return: Board -> Tabuleiro inicializado.
+-}
+initBoard :: Board -> Groups -> Int -> Dimension -> Board
+initBoard board groups index dimension   | index == (dimension * dimension) = board
+                                         | otherwise = do
+    let x = index `div` dimension
+    let y = index `mod` dimension
+    let pos = (x, y)
+
+    let n = getGroupSizeOfPosition groups pos 0
+
+    let values = [1..n]
+    let updatedBoard = setPossibleValues board pos values dimension
+
+    initBoard updatedBoard groups (index + 1) dimension
 
 {-|
     Retorna o tamanho do grupo, ou seja, quantos posições ele possui
