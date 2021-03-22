@@ -171,9 +171,7 @@ isPositionInGroup group pos posID = do
 initBoard :: Board -> Groups -> Int -> Dimension -> Board
 initBoard board groups index dimension   | index == (dimension * dimension) = board
                                          | otherwise = do
-    let x = index `div` dimension
-    let y = index `mod` dimension
-    let pos = (x, y)
+    let pos = getPosition index dimension
 
     let n = getGroupSizeOfPosition groups pos 0
 
@@ -215,17 +213,17 @@ isValueSet possibleValues = do
 
 
 {-|
-   Atualiza os possíveis valores de todas as células do tabuleiro
-   Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
+    Atualiza os possíveis valores de todas as células do tabuleiro
+    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
 
-   Param: Board ->
-   Param: Group ->
-   Param: Position ->
-   Param: PossibleValue ->
-   Param: Int ->
-   Param: Dimension ->
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Group ->
+    Param: Position ->
+    Param: PossibleValue ->
+    Param: Int ->
+    Param: Dimension ->
 
-   Return: Board ->
+    Return: Board ->
 -}
 updatePossibleValuesBySetValuesInGroup :: Board -> Group -> Position -> PossibleValue -> Int -> Dimension -> Board
 updatePossibleValuesBySetValuesInGroup board group position removedValue index dim
@@ -233,7 +231,7 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
   | otherwise = do
       let x = fst (group !! index)
       let y = snd (group !! index)
-      let i = (dim * (fst (group !! index))) + (snd (group !! index))
+      let i = (dim * x) + y
       if (group !! index == position)
          then updatePossibleValuesBySetValuesInGroup board group position removedValue (index + 1) dim
          else do
@@ -274,7 +272,7 @@ comparePossibleValuesWithinGroup board group position index dim
     | otherwise = do
       let x = fst (position)
       let y = snd (position)
-      let i = (dim * (fst (position))) + (snd (position))
+      let i = (dim * x) + y
       let possibleValues = board !! i
       let comparedValue = possibleValues !! index
 
@@ -292,7 +290,7 @@ compareValue board group pos value index dim
     | otherwise = do
         let x = fst (group !! index)
         let y = snd (group !! index)
-        let i = (dim * (fst (group !! index))) + (snd (group !! index))
+        let i = (dim * x) + y
         let possibleValues = board !! i
         if (pos == (x,y)) then compareValue board group pos value (index + 1) dim
             else
@@ -306,9 +304,11 @@ mainLoop board _ [] _ _ = board
 mainLoop board groups list index dim = do
     let indexOfBoard = list !! index
     let possibleValues = board !! indexOfBoard
-    let x = indexOfBoard `div` dim
-    let y = indexOfBoard `mod` dim
-    let pos = (x, y)
+
+    let pos = getPosition indexOfBoard dim
+    let x = fst pos
+    let y = snd pos
+
     let groupId = getGroupIdOfPosition groups pos 0
 
     if (isValueSet possibleValues) then do
@@ -323,6 +323,12 @@ mainLoop board groups list index dim = do
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
         if ((index + 1) >= (length list)) then mainLoop board_a groups list 0 dim
         else mainLoop board_a groups list (index + 1) dim
+
+getPosition :: Int -> Dimension -> Position
+getPosition index dimension = do
+    let x = index `div` dimension
+    let y = index `mod` dimension
+    (x, y)
 
 main = do
     --let n = 5
@@ -375,16 +381,11 @@ main = do
     --print ""
     --let solved = mainLoop board groups list 0 n
     --print (solved)
-    --
 
     --Teste 6x6
     let n = 6
     let groups =[[(0,0),(0,1),(0,2),(1,0)],[(0,3),(0,4),(0,5),(1,2),(1,3)],[(1,1),(2,0),(2,1),(2,2),(3,1)],[(1,4),(2,4)],[(1,5),(2,5),(3,5),(4,4),(4,5)],[(2,3),(3,2),(3,3),(3,4),(4,3)],[(3,0),(4,0),(4,1),(4,2),(5,0)],[(5,1),(5,2),(5,3),(5,4),(5,5)]]
 
-    -- Posições Iniciais
-    --let pos_5 = (4,1)
-    --let val_5 = [3]
-    --let startVal_5 = (pos_5, val_5)
     let pos_0 = (0,0)
     let val_0 = [4]
     let startVal_0 = (pos_0, val_0)
