@@ -103,35 +103,6 @@ setAllStartingValues board startingValues dimension = do
 
 
 {-|
-    Inicializa o tabuleiro, cada posição recebe a lista possíveis valores
-    de acordo com o tamanho da região ao qual a posição pertence pertence.
-
-    Se a região possui 4 posições, então cada posição pertencente a essa região recebe:
-    [1,2,3,4]
-
-    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
-    Param: Groups -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
-    Param: Int -> Índice usado p/ controlar a recursividade.
-    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
-
-    Return: Board -> Tabuleiro inicializado.
--}
-initBoard :: Board -> Groups -> Int -> Dimension -> Board
-initBoard board groups index dimension   | index == (dimension * dimension) = board
-                                         | otherwise = do
-    let x = index `div` dimension
-    let y = index `mod` dimension
-    let pos = (x, y)
-
-    let n = getGroupSizeOfPosition groups pos 0
-
-    let values = [1..n]
-    let updatedBoard = setPossibleValues board pos values dimension
-
-    initBoard updatedBoard groups (index + 1) dimension
-
-
-{-|
     Retorna a Id grupo ao qual a posição pertence.
 
     Param: Groups -> Lista de grupos
@@ -165,13 +136,12 @@ getGroupSizeOfPosition groups pos groupID = do
 {-|
     Verifica se uma posição pertence a um grupo.
 
-    Param: [Position] -> Grupo
+    Param: Group -> Grupo
     Param: Position -> Posição que deseja-se descobri o Id de seu Grupo.
     Param: Int -> Id do grupo da posição, usado para recursão.
     Return: Bool -> Valor booleano que indica se a posição pertence ao grupo.
 -}
-
-isPositionInGroup :: [Position] -> Position -> Int -> Bool
+isPositionInGroup :: Group -> Position -> Int -> Bool
 isPositionInGroup group pos posID = do
     if (posID == (length group)) then
         False
@@ -182,14 +152,43 @@ isPositionInGroup group pos posID = do
 
 
 {-|
+    Inicializa o tabuleiro, cada posição recebe a lista possíveis valores
+    de acordo com o tamanho da região ao qual a posição pertence pertence.
+
+    Se a região possui 4 posições, então cada posição pertencente a essa região recebe:
+    [1,2,3,4]
+
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Groups -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
+    Param: Int -> Índice usado p/ controlar a recursividade.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
+
+    Return: Board -> Tabuleiro inicializado.
+-}
+initBoard :: Board -> Groups -> Int -> Dimension -> Board
+initBoard board groups index dimension   | index == (dimension * dimension) = board
+                                         | otherwise = do
+    let x = index `div` dimension
+    let y = index `mod` dimension
+    let pos = (x, y)
+
+    let n = getGroupSizeOfPosition groups pos 0
+
+    let values = [1..n]
+    let updatedBoard = setPossibleValues board pos values dimension
+
+    initBoard updatedBoard groups (index + 1) dimension
+
+
+{-|
     Cria um tabuleiro, com os requisitos corretos e com os valores iniciais
 
-    Param: [[Position]] -> Tabuleiro
-    Param: [Cell] -> Lista de células, os valores iniciais.
-    Param: Int -> Dimensão do tabuleiro.
-    Return: [[Int]] -> Tabuleiro criado
+    Param: Groups -> Grupos (lista de lista de posições)
+    Param: StartingValues -> Lista de células, os valores iniciais.
+    Param: Dimension -> Dimensão do tabuleiro.
+    Return: Board -> Tabuleiro criado
 -}
-createBoard :: [[Position]] -> [Cell] -> Int -> [[Int]]
+createBoard :: Groups -> StartingValues -> Dimension -> Board
 createBoard groups startValues dim = do
     let board = initBoard ([[0] | x <- [1..(dim*dim)]]) groups 0 dim
     setAllStartingValues board startValues dim
@@ -202,7 +201,7 @@ createBoard groups startValues dim = do
     Param: [Int] -> Lista de possíveis valores
     Return: Bool -> True se tamanho = 1, False caso contrário
 -}
-isValueSet :: [Int] -> Bool
+isValueSet :: PossibleValues -> Bool
 isValueSet possibleValues = do
     if (length possibleValues == 1) then
         True
