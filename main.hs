@@ -186,6 +186,7 @@ initBoard board groups index dimension   | index == (dimension * dimension) = bo
     Param: Groups -> Grupos (lista de lista de posições)
     Param: StartingValues -> Lista de células, os valores iniciais.
     Param: Dimension -> Dimensão do tabuleiro.
+
     Return: Board -> Tabuleiro criado
 -}
 createBoard :: Groups -> StartingValues -> Dimension -> Board
@@ -198,7 +199,8 @@ createBoard groups startValues dim = do
     Retorna True se o valor da posição está definido,
     caso contrário retorna False
 
-    Param: [Int] -> Lista de possíveis valores
+    Param: PossibleValues -> Lista de possíveis valores
+
     Return: Bool -> True se tamanho = 1, False caso contrário
 -}
 isValueSet :: PossibleValues -> Bool
