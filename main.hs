@@ -12,6 +12,7 @@ type Cell = (Position, PossibleValues)
 
     Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido
     Param: PossibleValue -> O valor (inteiro) a ser removido da lista
+
     Return: PossibleValues -> A lista com o valor removido
 -}
 removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValues
@@ -25,26 +26,52 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Position -> A posição a ser inserido o valor correto.
     Param: PossibleValue -> O valor correto da posição.
-    Param: Int -> A dimensão do tabuleiro (Matrix NxN)
+    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
 setCorrectValue :: Board -> Position -> PossibleValue -> Dimension -> Board
 setCorrectValue board position correctValue dimension = do
     let tIndex = (dimension * (fst position) + (snd position))
     let dIndex = tIndex + 1
+
     (take tIndex board) ++ [[correctValue]] ++ (drop dIndex board)
 
+{-|
+    Insere no tabuleiro, na posição passada como argumento,
+    uma lista de possíveis valores.
+
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Position -> A posição a ser inserido o valor correto.
+    Param: PossibleValues -> Uma lista de possíveis valores
+    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+
+    Return: Board -> Tabuleiro com o valor correto inserido.
+-}
 setPossibleValues :: Board -> Position -> PossibleValues -> Dimension -> Board
 setPossibleValues board position possibleValues dimension = do
     let tIndex = dimension * (fst position) + (snd position)
     let dIndex = tIndex + 1
+
     (take tIndex board) ++ [possibleValues] ++ (drop dIndex board)
 
-removeAndSet :: [[Int]] -> Position -> Int -> Int -> [[Int]]
-removeAndSet board position value dim = do
-    let i = (dim * (fst position)) + (snd position)
-    let newList = removeValueFromPossibleValues (board !! i) value
-    setPossibleValues board position newList dim
+{-|
+    Remove um possível valor de uma lista de possíveis valores
+    e retorna o tabuleiro atualizado
+
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Position -> A posição da lista de possíveis valores que será atualizada
+    Param: PossibleValue -> Valor a ser removido da lista de possíveis valores
+    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+
+    Return: Board -> Tabuleiro com o valor correto inserido.
+-}
+removeAPossibleValue :: Board -> Position -> PossibleValue -> Dimension -> Board
+removeAPossibleValue board position value dimension = do
+    let index = (dimension * (fst position)) + (snd position)
+    let updatedPossibleValues = removeValueFromPossibleValues (board !! index) value
+
+    setPossibleValues board position updatedPossibleValues dimension
 
 {-|
     Função de inicialização do tabuleiro.
@@ -198,7 +225,7 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
       if (group !! index == position)
          then updatePossibleValuesBySetValuesInGroup board group position removedValue (index + 1) dim
          else do
-            let updatedBoard = removeAndSet board (x,y) removedValue dim
+            let updatedBoard = removeAPossibleValue board (x,y) removedValue dim
             updatePossibleValuesBySetValuesInGroup updatedBoard group position removedValue (index + 1) dim
 
 {-|
@@ -219,7 +246,7 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
             if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
                 then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
                 else do
-                    let updatedBoard = removeAndSet board (x,y) removedValue dim
+                    let updatedBoard = removeAPossibleValue board (x,y) removedValue dim
                     if (y == ((snd position) + 1))
                         then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
                         else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
