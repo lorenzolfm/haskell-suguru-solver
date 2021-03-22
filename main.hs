@@ -19,6 +19,24 @@ removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValu
 removeValueFromPossibleValues possibleValues value = [possibleValue | possibleValue <- possibleValues, possibleValue /= value]
 
 {-|
+    Remove um possível valor de uma lista de possíveis valores
+    e retorna o tabuleiro atualizado
+
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: Position -> A posição da lista de possíveis valores que será atualizada
+    Param: PossibleValue -> Valor a ser removido da lista de possíveis valores
+    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+
+    Return: Board -> Tabuleiro com o valor correto inserido.
+-}
+removeAPossibleValue :: Board -> Position -> PossibleValue -> Dimension -> Board
+removeAPossibleValue board position value dimension = do
+    let index = (dimension * (fst position)) + (snd position)
+    let updatedPossibleValues = removeValueFromPossibleValues (board !! index) value
+
+    setPossibleValues board position updatedPossibleValues dimension
+
+{-|
     Insere no tabuleiro, na posição passada como argumento,
     uma lista que contém um único elemento, sendo esse o elemento
     correto que ocupa a posição no tabuleiro.
@@ -55,23 +73,6 @@ setPossibleValues board position possibleValues dimension = do
 
     (take tIndex board) ++ [possibleValues] ++ (drop dIndex board)
 
-{-|
-    Remove um possível valor de uma lista de possíveis valores
-    e retorna o tabuleiro atualizado
-
-    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
-    Param: Position -> A posição da lista de possíveis valores que será atualizada
-    Param: PossibleValue -> Valor a ser removido da lista de possíveis valores
-    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
-
-    Return: Board -> Tabuleiro com o valor correto inserido.
--}
-removeAPossibleValue :: Board -> Position -> PossibleValue -> Dimension -> Board
-removeAPossibleValue board position value dimension = do
-    let index = (dimension * (fst position)) + (snd position)
-    let updatedPossibleValues = removeValueFromPossibleValues (board !! index) value
-
-    setPossibleValues board position updatedPossibleValues dimension
 
 {-|
     Função de inicialização do tabuleiro.
