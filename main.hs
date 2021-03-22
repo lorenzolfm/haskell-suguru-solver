@@ -13,6 +13,20 @@ type PossibleValues = [PossibleValue]
 type Group = [Position]
 type Groups = [Group]
 
+{-|
+    Retorna uma posição, baseado em um índice passado como argumento e a dimensão do tabuleiro
+
+    Param: Int -> Índice
+    Param: Dimension -> Dimensão do tabuleiro
+
+    Return: Position -> Tupla (x, y).
+-}
+getPosition :: Int -> Dimension -> Position
+getPosition index dimension = do
+    let x = index `div` dimension
+    let y = index `mod` dimension
+    (x, y)
+
 
 {-|
     Remove o inteiro passado como argumento da lista de possíveis valores.
@@ -214,16 +228,16 @@ isValueSet possibleValues = do
 
 {-|
     Atualiza os possíveis valores de todas as células do tabuleiro
-    Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
+    Exclui dos possiveis valores de uma célula os valores que já estão definidos em uma região.
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
-    Param: Group ->
-    Param: Position ->
-    Param: PossibleValue ->
-    Param: Int ->
-    Param: Dimension ->
+    Param: Group -> Grupo, uma lista de posições.
+    Param: Position -> Posição (tupla (x,y)) a posição da célula que vamos excluir
+    Param: PossibleValue -> Possível valor, um inteiro.
+    Param: Int -> Index, usado p/ recursão
+    Param: Dimension -> Dimensão do tabuleiro
 
-    Return: Board ->
+    Return: Board -> O tabuleiro atualizado.
 -}
 updatePossibleValuesBySetValuesInGroup :: Board -> Group -> Position -> PossibleValue -> Int -> Dimension -> Board
 updatePossibleValuesBySetValuesInGroup board group position removedValue index dim
@@ -252,13 +266,13 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
         if ((x < 0 || x >= dim || y < 0 || y >= dim) && (y == ((snd position) + 1)))
             then updatePossibleValuesBySetAdjecents board position removedValue ((x+1), (y-2)) dim
             else
-            if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
-                then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
-                else do
-                    let updatedBoard = removeAPossibleValue board (x,y) removedValue dim
-                    if (y == ((snd position) + 1))
-                        then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
-                        else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
+                if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
+                    then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
+                    else do
+                        let updatedBoard = removeAPossibleValue board (x,y) removedValue dim
+                        if (y == ((snd position) + 1))
+                            then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
+                            else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
 
 
 {-|
@@ -273,6 +287,7 @@ comparePossibleValuesWithinGroup board group position index dim
       let x = fst (position)
       let y = snd (position)
       let i = (dim * x) + y
+
       let possibleValues = board !! i
       let comparedValue = possibleValues !! index
 
@@ -291,7 +306,9 @@ compareValue board group pos value index dim
         let x = fst (group !! index)
         let y = snd (group !! index)
         let i = (dim * x) + y
+
         let possibleValues = board !! i
+
         if (pos == (x,y)) then compareValue board group pos value (index + 1) dim
             else
                 if (any (value==) possibleValues) then
@@ -315,20 +332,19 @@ mainLoop board groups list index dim = do
        let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
        let board_1 = updatePossibleValuesBySetAdjecents board_0 pos (possibleValues !! 0) ((x-1), (y-1)) dim
        let newList = removeValueFromPossibleValues list indexOfBoard
+
        if ((index + 1) >= (length newList)) then do
             mainLoop board_1 groups newList 0 dim
        else do
            mainLoop board_1 groups newList (index + 1) dim
+
     else do
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
-        if ((index + 1) >= (length list)) then mainLoop board_a groups list 0 dim
+
+        if ((index + 1) >= (length list))
+           then mainLoop board_a groups list 0 dim
         else mainLoop board_a groups list (index + 1) dim
 
-getPosition :: Int -> Dimension -> Position
-getPosition index dimension = do
-    let x = index `div` dimension
-    let y = index `mod` dimension
-    (x, y)
 
 main = do
     --let n = 5
