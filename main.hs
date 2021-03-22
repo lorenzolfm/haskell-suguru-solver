@@ -6,6 +6,8 @@ type PossibleValue = Int
 type Position = (Int, Int)
 type PossibleValues = [PossibleValue]
 type Cell = (Position, PossibleValues)
+type StartingValues = [Cell]
+
 
 {-|
     Remove o inteiro passado como argumento da lista de possíveis valores.
@@ -17,6 +19,7 @@ type Cell = (Position, PossibleValues)
 -}
 removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValues
 removeValueFromPossibleValues possibleValues value = [possibleValue | possibleValue <- possibleValues, possibleValue /= value]
+
 
 {-|
     Remove um possível valor de uma lista de possíveis valores
@@ -36,6 +39,7 @@ removeAPossibleValue board position value dimension = do
 
     setPossibleValues board position updatedPossibleValues dimension
 
+
 {-|
     Insere no tabuleiro, na posição passada como argumento,
     uma lista que contém um único elemento, sendo esse o elemento
@@ -54,6 +58,7 @@ setCorrectValue board position correctValue dimension = do
     let dIndex = tIndex + 1
 
     (take tIndex board) ++ [[correctValue]] ++ (drop dIndex board)
+
 
 {-|
     Insere no tabuleiro, na posição passada como argumento,
@@ -78,17 +83,20 @@ setPossibleValues board position possibleValues dimension = do
     Função de inicialização do tabuleiro.
     Para cada valor inicial já pré-preenchido, chama setCorrectValue.
 
-    Param: [[Int]] -> O tabuleiro, uma lista de lista de inteiros.
-    Param: Cell -> Lista de células. Os valores inicias que o tabuleiro contém.
-    Param: Int -> Dimensão do tabuleiro (matriz NxN)
-    Return: [[Int]] -> Tabuleiro inicializado.
+    Param: Board -> O tabuleiro, uma lista de lista de inteiros.
+    Param: StartingValues -> Lista de células. Os valores inicias que o tabuleiro contém.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
+    Return: Board -> Tabuleiro inicializado.
 -}
-setAllStartingValues :: [[Int]] -> [Cell] -> Int -> [[Int]]
-setAllStartingValues matrix [] _ = matrix
-setAllStartingValues matrix startValues dim = do
-    let new_matrix = setPossibleValues matrix (fst (startValues !! 0)) (snd (startValues !!0)) dim
-    let new_values = drop 1 startValues
-    setAllStartingValues new_matrix new_values dim
+setAllStartingValues :: Board -> StartingValues -> Dimension -> Board
+setAllStartingValues board [] _ = board
+setAllStartingValues board startingValues dimension = do
+    let position = fst (startingValues !! 0)
+    let possibleValues = snd (startingValues !! 0)
+    let updatedBoard = setPossibleValues board position possibleValues dimension
+    let updatedStartingValues = drop 1 startingValues
+
+    setAllStartingValues updatedBoard updatedStartingValues dimension
 
 {-|
     Inicializa o tabuleiro, cada posição recebe a lista possíveis valores
