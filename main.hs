@@ -5,7 +5,8 @@ type Dimension = Int
 type PossibleValue = Int
 type Position = (Int, Int)
 type PossibleValues = [PossibleValue]
-type Groups = [[Position]]
+type Group = [Position]
+type Groups = [Group]
 type Cell = (Position, PossibleValues)
 type StartingValues = [Cell]
 
@@ -100,6 +101,7 @@ setAllStartingValues board startingValues dimension = do
 
     setAllStartingValues updatedBoard updatedStartingValues dimension
 
+
 {-|
     Inicializa o tabuleiro, cada posição recebe a lista possíveis valores
     de acordo com o tamanho da região ao qual a posição pertence pertence.
@@ -128,24 +130,17 @@ initBoard board groups index dimension   | index == (dimension * dimension) = bo
 
     initBoard updatedBoard groups (index + 1) dimension
 
-{-|
-    Retorna o tamanho do grupo, ou seja, quantos posições ele possui
-
-    Param: [Position] -> Lista de posições pertencentes ao grupo.
-    Return: Int -> Tamanho do grupo
--}
-getGroupSize :: [Position] -> Int
-getGroupSize group = length group
 
 {-|
-    Retorna a Id grupo ao qual a posição pertence
+    Retorna a Id grupo ao qual a posição pertence.
 
-    Param: [[Position]] -> Lista de grupos
+    Param: Groups -> Lista de grupos
     Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
     Param: Int -> Id do grupo, usado para recursão.
-    Return: Int -> Tamanho do grupo
+
+    Return: Int -> Id do grupo.
 -}
-getGroupIdOfPosition :: [[Position]] -> Position -> Int -> Int
+getGroupIdOfPosition :: Groups -> Position -> Int -> Int
 getGroupIdOfPosition groups pos groupID = do
     if (isPositionInGroup (groups !! groupID) pos 0) then
           groupID
@@ -154,16 +149,19 @@ getGroupIdOfPosition groups pos groupID = do
 {-|
     Retorna o tamanho do grupo ao qual a posição pertence
 
-    Param: [[Position]] -> Lista de grupos
+    Param: Groups -> Lista de grupos
     Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
     Param: Int -> Id do grupo, usado para recursão.
-    Return: Int -> Id do grupo.
+
+    Return: Int -> Número de posições pertencentes ao (tamanho do grupo)
 -}
-getGroupSizeOfPosition :: [[Position]] -> Position -> Int -> Int
+getGroupSizeOfPosition :: Groups -> Position -> Int -> Int
 getGroupSizeOfPosition groups pos groupID = do
     if (isPositionInGroup (groups !! groupID) pos 0) then
          length (groups !! groupID)
         else (getGroupSizeOfPosition groups pos (groupID + 1))
+
+
 {-|
     Verifica se uma posição pertence a um grupo.
 
