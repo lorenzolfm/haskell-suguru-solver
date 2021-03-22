@@ -203,13 +203,16 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
     | otherwise = do
         let x = fst positionVariable
         let y = snd positionVariable
-        if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
-            then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
-            else do
-                let updatedBoard = removeAndSet board (x,y) removedValue dim
-                if (y == ((snd position) + 1)) 
-                    then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
-                    else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
+        if ((x < 0 || x >= dim) && (y == ((snd position) + 1))) 
+            then updatePossibleValuesBySetAdjecents board position removedValue ((x+1), (y-2)) dim
+            else
+            if ((x,y) == position || x < 0 || x >= dim || y < 0 || y >= dim)
+                then updatePossibleValuesBySetAdjecents board position removedValue (x, (y+1)) dim
+                else do
+                    let updatedBoard = removeAndSet board (x,y) removedValue dim
+                    if (y == ((snd position) + 1)) 
+                        then updatePossibleValuesBySetAdjecents updatedBoard position removedValue ((x+1), (y-2)) dim
+                        else updatePossibleValuesBySetAdjecents updatedBoard position removedValue (x, (y+1)) dim
 
 
 {-|
@@ -263,7 +266,7 @@ mainLoop board groups list index dim = do
     --trace ("list = " ++ show list) (show list)
     --trace ("indexOfBoard = " ++ show indexOfBoard) (show indexOfBoard)
     --trace ("possibleValues = " ++ show possibleValues) (show possibleValues)
-    --trace ("pos = " ++ show pos) (show pos)
+    trace ("pos = " ++ show pos) (show pos)
     --trace ("groupId = " ++ show groupId) (show groupId)
     if (isValueSet possibleValues) then do
        let board_0 = updatePossibleValuesBySetValuesInGroup board (groups !! groupId) pos (possibleValues !! 0) 0 dim
