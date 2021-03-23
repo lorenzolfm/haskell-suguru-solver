@@ -16,8 +16,8 @@ type Groups = [Group]
 {-|
     Retorna uma posição, baseado em um índice passado como argumento e a dimensão do tabuleiro
 
-    Param: Int -> Índice
-    Param: Dimension -> Dimensão do tabuleiro
+    Param: Int -> Índice.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Position -> Tupla (x, y).
 -}
@@ -31,10 +31,10 @@ getPosition index dimension = do
 {-|
     Remove o inteiro passado como argumento da lista de possíveis valores.
 
-    Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido
-    Param: PossibleValue -> O valor (inteiro) a ser removido da lista
+    Param: PossibleValues -> Uma lista de inteiros, que contém o valor a ser removido.
+    Param: PossibleValue -> O valor (inteiro) a ser removido da lista.
 
-    Return: PossibleValues -> A lista com o valor removido
+    Return: PossibleValues -> A lista com o valor removido.
 -}
 removeValueFromPossibleValues :: PossibleValues -> PossibleValue -> PossibleValues
 removeValueFromPossibleValues possibleValues value = [possibleValue | possibleValue <- possibleValues, possibleValue /= value]
@@ -42,12 +42,12 @@ removeValueFromPossibleValues possibleValues value = [possibleValue | possibleVa
 
 {-|
     Remove um possível valor de uma lista de possíveis valores
-    e retorna o tabuleiro atualizado
+    e retorna o tabuleiro atualizado.
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
-    Param: Position -> A posição da lista de possíveis valores que será atualizada
-    Param: PossibleValue -> Valor a ser removido da lista de possíveis valores
-    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+    Param: Position -> A posição da lista de possíveis valores que será atualizada.
+    Param: PossibleValue -> Valor a ser removido da lista de possíveis valores>
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
@@ -67,7 +67,7 @@ removeAPossibleValue board position value dimension = do
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Position -> A posição a ser inserido o valor correto.
     Param: PossibleValue -> O valor correto da posição.
-    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
@@ -85,8 +85,8 @@ setCorrectValue board position correctValue dimension = do
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Position -> A posição a ser inserido o valor correto.
-    Param: PossibleValues -> Uma lista de possíveis valores
-    Param: Dimension -> A dimensão do tabuleiro (Matrix NxN)
+    Param: PossibleValues -> Uma lista de possíveis valores.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> Tabuleiro com o valor correto inserido.
 -}
@@ -104,7 +104,7 @@ setPossibleValues board position possibleValues dimension = do
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: StartingValues -> Lista de células. Os valores inicias que o tabuleiro contém.
-    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> Tabuleiro inicializado.
 -}
@@ -122,7 +122,7 @@ setAllStartingValues board startingValues dimension = do
 {-|
     Retorna a Id grupo ao qual a posição pertence.
 
-    Param: Groups -> Lista de grupos
+    Param: Groups -> Lista de grupos.
     Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
     Param: Int -> Id do grupo, usado para recursão.
 
@@ -137,11 +137,11 @@ getGroupIdOfPosition groups pos groupID = do
 {-|
     Retorna o tamanho do grupo ao qual a posição pertence
 
-    Param: Groups -> Lista de grupos
+    Param: Groups -> Lista de grupos>
     Param: Position -> Posição que deseja-se descobrir o Id de seu Grupo.
     Param: Int -> Id do grupo, usado para recursão.
 
-    Return: Int -> Número de posições pertencentes ao (tamanho do grupo)
+    Return: Int -> Número de posições pertencentes ao (tamanho do grupo).
 -}
 getGroupSizeOfPosition :: Groups -> Position -> Int -> Int
 getGroupSizeOfPosition groups pos groupID = do
@@ -153,7 +153,7 @@ getGroupSizeOfPosition groups pos groupID = do
 {-|
     Verifica se uma posição pertence a um grupo.
 
-    Param: Group -> Grupo
+    Param: Group -> Grupo.
     Param: Position -> Posição que deseja-se descobri o Id de seu Grupo.
     Param: Int -> Id do grupo da posição, usado para recursão.
     Return: Bool -> Valor booleano que indica se a posição pertence ao grupo.
@@ -173,12 +173,12 @@ isPositionInGroup group pos posID = do
     de acordo com o tamanho da região ao qual a posição pertence pertence.
 
     Se a região possui 4 posições, então cada posição pertencente a essa região recebe:
-    [1,2,3,4]
+    [1,2,3,4].
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Groups -> Uma lista de lista de posições. Cada lista de posições representa um grupo.
     Param: Int -> Índice usado p/ controlar a recursividade.
-    Param: Dimension -> Dimensão do tabuleiro (matriz NxN)
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> Tabuleiro inicializado.
 -}
@@ -200,9 +200,9 @@ initBoard board groups index dimension   | index == (dimension * dimension) = bo
 
     Param: Groups -> Grupos (lista de lista de posições)
     Param: StartingValues -> Lista de células, os valores iniciais.
-    Param: Dimension -> Dimensão do tabuleiro.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
-    Return: Board -> Tabuleiro criado
+    Return: Board -> Tabuleiro criado.
 -}
 createBoard :: Groups -> StartingValues -> Dimension -> Board
 createBoard groups startValues dim = do
@@ -212,11 +212,11 @@ createBoard groups startValues dim = do
 
 {-|
     Retorna True se o valor da posição está definido,
-    caso contrário retorna False
+    caso contrário retorna False.
 
-    Param: PossibleValues -> Lista de possíveis valores
+    Param: PossibleValues -> Lista de possíveis valores.
 
-    Return: Bool -> True se tamanho = 1, False caso contrário
+    Return: Bool -> True se tamanho = 1, False caso contrário.
 -}
 isValueSet :: PossibleValues -> Bool
 isValueSet possibleValues = do
@@ -227,15 +227,15 @@ isValueSet possibleValues = do
 
 
 {-|
-    Atualiza os possíveis valores de todas as células do tabuleiro
+    Atualiza os possíveis valores de todas as células de um grupo.
     Exclui dos possiveis valores de uma célula os valores que já estão definidos em uma região.
 
     Param: Board -> O tabuleiro, uma lista de lista de inteiros.
     Param: Group -> Grupo, uma lista de posições.
-    Param: Position -> Posição (tupla (x,y)) a posição da célula que vamos excluir
+    Param: Position -> Posição (tupla (x,y)) a posição da célula que vamos excluir.
     Param: PossibleValue -> Possível valor, um inteiro.
-    Param: Int -> Index, usado p/ recursão
-    Param: Dimension -> Dimensão do tabuleiro
+    Param: Int -> Index, usado p/ recursão.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
 
     Return: Board -> O tabuleiro atualizado.
 -}
@@ -253,8 +253,16 @@ updatePossibleValuesBySetValuesInGroup board group position removedValue index d
             updatePossibleValuesBySetValuesInGroup updatedBoard group position removedValue (index + 1) dim
 
 {-|
-   Atualiza os possíveis valores de todas as células do tabuleiro
-   Exclui dos possiveis valores de uma célular os valores que já estão definidos em uma região.
+    Atualiza os possíveis valores das células adjacentes a uma célula que tem seu valor já definido.
+    Exclui dos possiveis valores das células adjacentes o valor definido na célula.
+
+    Param: Board -> Tabuleiro do jogo.
+    Param: Position -> Uma tupla (x, y), posição "sob análise"
+    Param: PossibleValue -> Valor a ser removido.
+    Param: Position -> Uma tupla (x, y), posição do adjacente.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
+
+    Return: Board -> Tabuleiro do jogo atualizado.
 
 -}
 updatePossibleValuesBySetAdjecents :: Board -> Position -> PossibleValue -> Position -> Dimension -> Board
@@ -279,6 +287,20 @@ updatePossibleValuesBySetAdjecents board position removedValue positionVariable 
     P/ todas células de uma região, se ela possui um possível valor
     que não é compartilhado com mais nenhuma célula da região,
     esse é o valor que a célula deve possuir.
+
+    Essa função compara os possíveis valores entre as posições que pertencem
+    a região. Caso algum valor seja único em alguma das posições da região,
+    os outros possíveis valores da lista são excluídos e, em seguida, é chamado
+    updatePossibleValuesBySetValuesInGroup e updatePossibleValuesBySetAdjecents
+
+
+    Param: Board -> Tabuleiro do jogo.
+    Param: Group -> Grupo sob análise.
+    Param: Position -> Posição de alguma célula do grupo
+    Param: Int -> Índice usado para controlar a recursividade.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
+
+    Return: Board -> Tabuleiro do jogo atualizado.
 -}
 comparePossibleValuesWithinGroup :: Board -> Group -> Position -> Int -> Dimension -> Board
 comparePossibleValuesWithinGroup board group position index dim
@@ -299,6 +321,21 @@ comparePossibleValuesWithinGroup board group position index dim
       else
         comparePossibleValuesWithinGroup board group position (index + 1) dim
 
+
+
+{-|
+    Compara um valor com todos os possíveis valores do grupo. Caso ele seja único (pertence a apenas uma posição),
+    então retorna True, caso contrário retorna False.
+
+    Param: Board -> Tabuleiro do jogo.
+    Param: Group -> Grupo sob análise.
+    Param: Position -> Posição do valor que se quer comparar.
+    Param: PossibleValue -> Valor que se quer comparar.
+    Param: Int -> Índice usado para controlar a recursividade.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
+
+    Return: Bool -> Booleano, indicando se o valor que se quer comparar é unico no grupo.
+-}
 compareValue :: Board -> Group -> Position -> PossibleValue -> Int -> Dimension -> Bool
 compareValue board group pos value index dim
     | (index >= (length group)) = True
@@ -316,9 +353,21 @@ compareValue board group pos value index dim
                 else
                     compareValue board group pos value (index + 1) dim
 
-mainLoop :: Board -> Groups -> [Int] -> Int -> Dimension -> Board
-mainLoop board _ [] _ _ = board
-mainLoop board groups list index dim = do
+
+{-|
+   Recebe um tabuleiro de suguru e o resolve, chamando as funções auxiliares declaradas anteriormente.
+
+    Param: Board -> Tabuleiro apenas com os valores iniciais.
+    Param: Groups -> Grupos pertencentes ao tabuleiro.
+    Param: [Int] -> Lista de controle, que controla quantas posições ainda não tiveram seus valores determinados.
+    Param: Int -> Índice usado para percorer o tabuleiro.
+    Param: Dimension -> Dimensão do tabuleiro (matriz NxN).
+
+    Return: Board -> Tabuleiro resolvido.
+-}
+suguruSolver :: Board -> Groups -> [Int] -> Int -> Dimension -> Board
+suguruSolver board _ [] _ _ = board
+suguruSolver board groups list index dim = do
     let indexOfBoard = list !! index
     let possibleValues = board !! indexOfBoard
 
@@ -334,16 +383,16 @@ mainLoop board groups list index dim = do
        let newList = removeValueFromPossibleValues list indexOfBoard
 
        if ((index + 1) >= (length newList)) then do
-            mainLoop board_1 groups newList 0 dim
+            suguruSolver board_1 groups newList 0 dim
        else do
-           mainLoop board_1 groups newList (index + 1) dim
+           suguruSolver board_1 groups newList (index + 1) dim
 
     else do
         let board_a = comparePossibleValuesWithinGroup board (groups !! groupId) pos 0 dim
 
         if ((index + 1) >= (length list))
-           then mainLoop board_a groups list 0 dim
-        else mainLoop board_a groups list (index + 1) dim
+           then suguruSolver board_a groups list 0 dim
+        else suguruSolver board_a groups list (index + 1) dim
 
 
 main = do
@@ -395,7 +444,7 @@ main = do
     -- Remover das células os valores já definidos na região a qual ela pertence
     --print board
     --print ""
-    --let solved = mainLoop board groups list 0 n
+    --let solved = suguruSolver board groups list 0 n
     --print (solved)
 
     --Teste 6x6
@@ -440,5 +489,5 @@ main = do
 
     let board = createBoard groups startValues n
     let list = [0 .. ((n*n)-1)]
-    let solved = mainLoop board groups list 0 n
+    let solved = suguruSolver board groups list 0 n
     print (solved)
